@@ -83,7 +83,7 @@ export default function Loading({ setCurrentViewAction, setIsInitializedAction }
 		if (isAppropriate) {
 			fetchOrCreateUser();
 		}
-	}, []);
+	}, [fetchOrCreateUser]);
 
 	useEffect(() => {
 		if (isDataLoaded) {
