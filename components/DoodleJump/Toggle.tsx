@@ -1,3 +1,7 @@
+// components/DoodleJump/Toggle.tsx
+
+'use client'
+
 import React from 'react';
 
 interface ToggleProps {
@@ -5,7 +9,7 @@ interface ToggleProps {
 	onToggle: (toggleState: boolean) => void;
 }
 
-const Toggle: React.FC<ToggleProps> = ({ isChecked, onToggle }: ToggleProps) => {
+const Toggle: React.FC<ToggleProps> = ({ isChecked, onToggle }) => {
 
 	const handleToggle = (): void => {
 		onToggle(!isChecked);

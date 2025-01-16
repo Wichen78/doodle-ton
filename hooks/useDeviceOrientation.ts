@@ -3,32 +3,17 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { DeviceOrientationData, DeviceOrientationEventIOS } from '@/types';
 
-type DeviceOrientation = {
-	alpha: number | null;
-	beta: number | null;
-	gamma: number | null;
-};
-
-type UseDeviceOrientationData = {
-	permission: boolean;
-	orientation: DeviceOrientation | null;
-	error: Error | null;
-	requestAccess: () => Promise<boolean>;
-	revokeAccess: () => Promise<void>;
-};
-
-interface DeviceOrientationEventIOS extends DeviceOrientationEvent {
-	requestPermission?: () => Promise<'granted' | 'denied'>;
-}
-
-export const useDeviceOrientation = (): UseDeviceOrientationData => {
+export const useDeviceOrientation = (): DeviceOrientationData => {
 	const [permission, setPermission] = useState<boolean>(false);
 	const [error, setError] = useState<Error | null>(null);
-	const [orientation, setOrientation] = useState<DeviceOrientation | null>(null);
+	const [orientation, setOrientation] = useState<DeviceOrientationEvent | null>(null);
 
 	const onDeviceOrientation = (event: DeviceOrientationEvent): void => {
 		setOrientation({
+			...event,
+			absolute: event.absolute,
 			alpha: event.alpha,
 			beta: event.beta,
 			gamma: event.gamma,
