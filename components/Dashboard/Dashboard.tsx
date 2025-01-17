@@ -2,11 +2,12 @@
 
 'use client';
 
-import { useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import LoadingScreen from '@/components/Loading/Loading';
-import Home from '@/components/Home/Home';
+import Game from '@/components/Game/Game.tsx';
+import Navigation from '@/components/Navigation/Navigation.tsx';
 
-function Dashboard() {
+const Dashboard: FC = () => {
 	const [currentView, setCurrentViewState] = useState<string>('loading');
 	const [isInitialized, setIsInitialized] = useState(false);
 
@@ -25,7 +26,7 @@ function Dashboard() {
 
 		switch (currentView) {
 			default:
-				return <Home
+				return <Game
 					currentView={ currentView }
 					setCurrentViewAction={ setCurrentView }
 				/>;
@@ -33,8 +34,16 @@ function Dashboard() {
 	}, [currentView, isInitialized]);
 
 	return (
-		<>{ renderCurrentView() }</>
+		<>
+			{ renderCurrentView() }
+			{ isInitialized && currentView !== 'loading' && (
+				<Navigation
+					currentView={ currentView }
+					setCurrentViewAction={ setCurrentView }
+				/>
+			) }
+		</>
 	);
-}
+};
 
 export default Dashboard;

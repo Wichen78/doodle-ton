@@ -2,12 +2,14 @@
 
 'use client';
 
+import { FC } from 'react';
+
 interface GlobalErrorProps {
 	error: Error & { digest?: string };
 	reset: () => void;
 }
 
-export default function GlobalError({ error, reset, }: GlobalErrorProps) {
+const GlobalError: FC<GlobalErrorProps> = ({ error, reset, }) => {
 	console.log('Error caught by boundary:', error);
 	return (
 		<html>
@@ -17,4 +19,6 @@ export default function GlobalError({ error, reset, }: GlobalErrorProps) {
 		</body>
 		</html>
 	);
-}
+};
+
+export default GlobalError;

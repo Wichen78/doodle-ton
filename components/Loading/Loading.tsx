@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { UAParser } from 'ua-parser-js';
 import { GameState, InitialGameState, useGameStore } from '@/utils/game-mechanics';
 
@@ -11,7 +11,7 @@ interface LoadingProps {
 	setIsInitializedAction: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Loading({ setCurrentViewAction, setIsInitializedAction }: LoadingProps) {
+const Loading: FC<LoadingProps> = ({ setCurrentViewAction, setIsInitializedAction }) => {
 	const initializeState = useGameStore((state: GameState) => state.initializeState);
 	const [isDataLoaded, setIsDataLoaded] = useState(false);
 	const openTimestampRef = useRef(Date.now());
@@ -102,15 +102,17 @@ export default function Loading({ setCurrentViewAction, setIsInitializedAction }
 
 	if (!isAppropriateDevice) {
 		return (
-			<div className="w-full max-w-xl text-white flex flex-col items-center">
+			<div className="w-full h-screen max-w-xl flex flex-col items-center">
 				<h1 className="text-2xl font-bold mb-4">Play on your mobile</h1>
 			</div>
 		);
 	}
 
 	return (
-		<div className="w-full max-w-xl text-white flex flex-col items-center">
+		<div className="w-full h-screen max-w-xl flex flex-col items-center">
 			<h1 className="text-2xl font-bold mb-4">Loading Doodle Ton</h1>
 		</div>
 	);
-}
+};
+
+export default Loading;

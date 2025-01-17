@@ -1,4 +1,4 @@
-// hooks/useGameLoop.tsx
+// hooks/useGameLoop.ts
 
 'use client';
 
@@ -16,6 +16,15 @@ export const useGameLoop = (
 	const prevDoodleY = useRef(0);
 	const platforms = useRef<{ x: number; y: number }[]>([]);
 	const loopId = useRef<number | null>(null); // Ref pour stocker l'ID de l'animation
+	const playerImageRef = useRef<HTMLImageElement | null>(null);
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const img = new Image();
+			img.src = 'player1.png';
+			playerImageRef.current = img;
+		}
+	}, []);
 
 	const resetGame = () => {
 		const canvas = canvasRef.current;
@@ -97,7 +106,24 @@ export const useGameLoop = (
 			);
 
 			context.fillStyle = 'yellow';
-			context.fillRect(doodle.x, doodle.y, doodle.width, doodle.height);
+
+			const playerImage = playerImageRef.current;
+			if (playerImage) {
+				context.drawImage(
+					playerImage,
+					0,
+					0,
+					playerImage.width,
+					playerImage.height,
+					doodle.x,
+					doodle.y,
+					doodle.width,
+					doodle.height
+				);
+			} else {
+				context.fillStyle = 'yellow';
+				context.fillRect(doodle.x, doodle.y, doodle.width, doodle.height);
+			}
 
 			// Mettre à jour prevDoodleY
 			prevDoodleY.current = doodle.y;

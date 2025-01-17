@@ -3,13 +3,14 @@
 'use client';
 
 import Dashboard from '@/components/Dashboard/Dashboard';
+import { FC } from 'react';
 
-export default function Page() {
+const Page: FC = () => {
 	return (
-		<div className="bg-[#1d2025] flex justify-center min-h-screen">
-			<div className="w-full bg-[#1d2025] text-white h-screen font-bold flex flex-col max-w-xl">
-				<Dashboard />
-			</div>
+		<div className="w-full bg-[#1d2025] text-white h-full overflow-y-hidden no-scrollbar font-bold">
+			<Dashboard />
 		</div>
 	);
-}
+};
+
+export default Page;
