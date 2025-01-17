@@ -12,9 +12,18 @@ export interface DeviceOrientationEventIOS extends DeviceOrientationEvent {
 }
 
 export interface DeviceOrientationData {
-	permission: boolean;
 	orientation: DeviceOrientationEvent | null;
 	error: Error | null;
 	requestAccess: () => Promise<boolean>;
 	revokeAccess: () => Promise<void>;
-};
+}
+
+export interface IconProps {
+	size?: number;
+	className?: string;
+}
+
+export interface NavigationProps {
+	currentView: string;
+	setCurrentViewAction: (view: string) => void;
+}
