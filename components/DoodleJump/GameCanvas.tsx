@@ -17,8 +17,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ orientation, gameEnded, setGame
 	useGameLoop(canvasRef, orientation, gameEnded, setGameEndedAction);
 
 	return (
-		<canvas ref={ canvasRef } width={ window.innerWidth } height={ window.innerHeight - 72 }
-						style={ { border: '1px solid black' } } />
+		<canvas ref={ canvasRef } style={ { border: '1px solid black' } } />
 	);
 };
 

@@ -1,8 +1,8 @@
 // utils/consts.ts
 
 export const PLATFORM = {
-	width: 65,
-	height: 20,
-	minSpace: 15,
-	maxSpace: 20,
+	width: 195,
+	height: 60,
+	minSpace: 45,
+	maxSpace: 60,
 }
