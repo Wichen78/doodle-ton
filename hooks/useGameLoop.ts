@@ -22,6 +22,7 @@ export const useGameLoop = (
 		if (typeof window !== 'undefined') {
 			const img = new Image();
 			img.src = 'player1.png';
+			img.style.objectFit = 'contain';
 			playerImageRef.current = img;
 		}
 	}, []);
@@ -45,18 +46,25 @@ export const useGameLoop = (
 		const context = canvas.getContext('2d');
 		if (!context) return;
 
-		const gravity = 0.33;
-		const bounceVelocity = -12.5;
+		// Game size
+		canvas.style.width = `${window.innerWidth}px`;
+		canvas.style.height = `${window.innerHeight - 72}px`;
+		const scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+		canvas.width = Math.floor(window.innerWidth * scale);
+		canvas.height = Math.floor((window.innerHeight - 72) * scale);
+
+		const gravity = 1;
+		const bounceVelocity = -37.5;
 
 		// Initialiser ou réinitialiser les plateformes
 		platforms.current = initializePlatforms(canvas);
 
 		// Créer un objet doodle
 		const doodle: DoodlePlayer = {
-			width: 40,
-			height: 60,
-			x: canvas.width / 2 - 20,
-			y: canvas.height - 110,
+			width: 120,
+			height: 180,
+			x: canvas.width / 2 - 60,
+			y: canvas.height - 240,
 			dx: 0,
 			dy: 0,
 		};
@@ -84,9 +92,9 @@ export const useGameLoop = (
 
 			// Gestion du mouvement du joueur
 			if (playerDir.current < 0) {
-				doodle.dx = -3;
+				doodle.dx = -9;
 			} else if (playerDir.current > 0) {
-				doodle.dx = 3;
+				doodle.dx = 9;
 			} else {
 				doodle.dx *= 0.9;
 			}
