@@ -2,7 +2,7 @@
 
 'use client'
 
-import React, { createContext, ReactNode, useContext } from 'react';
+import React, { createContext, FC, ReactNode, useContext } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 
 type ToastContextType = {
@@ -31,7 +31,7 @@ const toastOptions = {
 	},
 };
 
-export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ToastProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const showToast = (message: string, type: 'success' | 'error') => {
 		if (type === 'success') {
 			toast.success(message);

@@ -6,6 +6,7 @@ import { RefObject, useEffect, useRef } from 'react';
 import { DoodlePlayer } from '@/types';
 import { addNewPlatforms, initializePlatforms, updatePlatforms } from '@/utils/platformUtils';
 import { updatePlayers } from '@/utils/playerUtils.ts';
+import { useGame } from '@/contexts/GameContext.tsx';
 
 export const useGameLoop = (
 	canvasRef: RefObject<HTMLCanvasElement>,
@@ -19,6 +20,7 @@ export const useGameLoop = (
 	const loopId = useRef<number | null>(null); // Ref pour stocker l'ID de l'animation
 	const playerImageRef = useRef<HTMLImageElement | null>(null);
 	const platformImageRef = useRef<HTMLImageElement | null>(null);
+	const { increaseScore, resetScore } = useGame();
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -38,6 +40,7 @@ export const useGameLoop = (
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
+		resetScore();
 		platforms.current = initializePlatforms(canvas);
 		prevDoodleY.current = canvas.height - 110;
 		const context = canvas.getContext('2d');
@@ -111,7 +114,7 @@ export const useGameLoop = (
 			else if (doodle.x > canvas.width) doodle.x = -doodle.width;
 
 			// Mettre à jour les plateformes et détecter les collisions
-			platforms.current = updatePlatforms(
+			const { visiblePlatforms, removedCount } = updatePlatforms(
 				context,
 				canvas,
 				platforms.current,
@@ -120,6 +123,8 @@ export const useGameLoop = (
 				bounceVelocity,
 				platformImageRef.current
 			);
+			platforms.current = visiblePlatforms;
+			increaseScore(removedCount);
 
 			updatePlayers(
 				context,
