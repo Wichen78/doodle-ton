@@ -70,8 +70,11 @@ export const updatePlatforms = (
 		}
 	});
 
-	// Filter out platforms that have moved out of view
-	return platforms.filter((platform) => platform.y < canvas.height);
+	const visiblePlatforms = platforms.filter((platform) => platform.y < canvas.height);
+
+	const removedCount = platforms.length - visiblePlatforms.length;
+
+	return { visiblePlatforms, removedCount };
 };
 
 const random = (min: number, max: number) => Math.random() * (max - min) + min;
