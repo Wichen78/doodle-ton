@@ -5,6 +5,7 @@
 import { RefObject, useEffect, useRef } from 'react';
 import { DoodlePlayer } from '@/types';
 import { addNewPlatforms, initializePlatforms, updatePlatforms } from '@/utils/platformUtils';
+import { updatePlayers } from '@/utils/playerUtils.ts';
 
 export const useGameLoop = (
 	canvasRef: RefObject<HTMLCanvasElement>,
@@ -17,13 +18,19 @@ export const useGameLoop = (
 	const platforms = useRef<{ x: number; y: number }[]>([]);
 	const loopId = useRef<number | null>(null); // Ref pour stocker l'ID de l'animation
 	const playerImageRef = useRef<HTMLImageElement | null>(null);
+	const platformImageRef = useRef<HTMLImageElement | null>(null);
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
-			const img = new Image();
-			img.src = 'player1.png';
-			img.style.objectFit = 'contain';
-			playerImageRef.current = img;
+			const imgPlayer = new Image();
+			imgPlayer.src = 'players/default.png';
+			imgPlayer.style.objectFit = 'contain';
+			playerImageRef.current = imgPlayer;
+
+			const imgPlatform = new Image();
+			imgPlatform.src = 'platforms/default.png';
+			imgPlatform.style.objectFit = 'contain';
+			platformImageRef.current = imgPlatform;
 		}
 	}, []);
 
@@ -47,8 +54,8 @@ export const useGameLoop = (
 		if (!context) return;
 
 		// Game size
-		canvas.style.width = `${window.innerWidth}px`;
-		canvas.style.height = `${window.innerHeight - 72}px`;
+		canvas.style.width = `${ window.innerWidth }px`;
+		canvas.style.height = `${ window.innerHeight - 72 }px`;
 		const scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
 		canvas.width = Math.floor(window.innerWidth * scale);
 		canvas.height = Math.floor((window.innerHeight - 72) * scale);
@@ -110,28 +117,15 @@ export const useGameLoop = (
 				platforms.current,
 				doodle,
 				prevDoodleY.current,
-				bounceVelocity
+				bounceVelocity,
+				platformImageRef.current
 			);
 
-			context.fillStyle = 'yellow';
-
-			const playerImage = playerImageRef.current;
-			if (playerImage) {
-				context.drawImage(
-					playerImage,
-					0,
-					0,
-					playerImage.width,
-					playerImage.height,
-					doodle.x,
-					doodle.y,
-					doodle.width,
-					doodle.height
-				);
-			} else {
-				context.fillStyle = 'yellow';
-				context.fillRect(doodle.x, doodle.y, doodle.width, doodle.height);
-			}
+			updatePlayers(
+				context,
+				doodle,
+				playerImageRef.current
+			);
 
 			// Mettre à jour prevDoodleY
 			prevDoodleY.current = doodle.y;

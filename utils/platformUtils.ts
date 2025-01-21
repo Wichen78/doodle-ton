@@ -44,13 +44,18 @@ export const updatePlatforms = (
 	platforms: { x: number; y: number }[],
 	doodle: DoodlePlayer,
 	prevDoodleY: number, // Position précédente du doodle
-	bounceVelocity: number
+	bounceVelocity: number,
+	platformImage: HTMLImageElement | null,
 ) => {
 
 	// Update and draw each platform
 	platforms.forEach((platform) => {
-		context.fillStyle = 'green';
-		context.fillRect(platform.x, platform.y, PLATFORM.width, PLATFORM.height);
+		if (platformImage) {
+			context.drawImage(platformImage, 0, 0, platformImage.width, platformImage.height, platform.x, platform.y, PLATFORM.width, PLATFORM.height);
+		} else {
+			context.fillStyle = 'green';
+			context.fillRect(platform.x, platform.y, PLATFORM.width, PLATFORM.height);
+		}
 
 		// Check for collision with the player
 		if (
