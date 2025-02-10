@@ -19,7 +19,6 @@ const Loading: FC<LoadingProps> = ({ setCurrentViewAction, setIsInitializedActio
 
 	const fetchOrCreateUser = useCallback(async () => {
 		try {
-			//let initData, telegramId, username, telegramName, startParam;
 			let initData, telegramName, startParam;
 
 			if (typeof window !== 'undefined') {
@@ -27,7 +26,6 @@ const Loading: FC<LoadingProps> = ({ setCurrentViewAction, setIsInitializedActio
 				WebApp.ready();
 				initData = WebApp.initData;
 				//telegramId = WebApp.initDataUnsafe.user?.id.toString();
-				//username = WebApp.initDataUnsafe.user?.username || 'Unknown User';
 				telegramName = WebApp.initDataUnsafe.user?.first_name || 'Unknown User';
 				startParam = WebApp.initDataUnsafe.start_param;
 			}

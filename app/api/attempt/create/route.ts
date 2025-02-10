@@ -1,16 +1,16 @@
-// app/api/user/route.ts
+// app/api/attempt/create/route.ts
 
 import { NextResponse } from 'next/server';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/binary';
-
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { prisma } from '@/utils/prisma';
-import { validateTelegramWebAppData } from '@/utils/server-checks';
+import { validateTelegramWebAppData } from '@/utils/server-checks.ts';
 
 export async function POST(req: Request) {
-	const body = await req.json();
-	const { telegramInitData } = body;
 
-	if (!telegramInitData) {
+	const body = await req.json();
+	const { telegramInitData, score } = body;
+
+	if (!telegramInitData || !score) {
 		return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
 	}
 
@@ -27,33 +27,41 @@ export async function POST(req: Request) {
 	}
 
 	try {
-		let dbUser = await prisma.user.findUnique({
-			where: { telegramId },
+		const result = await prisma.$transaction(async (prisma) => {
+			// Find the user
+			const dbUser = await prisma.user.findUnique({
+				where: { telegramId },
+			});
+
+			if (!dbUser) {
+				throw new Error('User not found');
+			}
+
+			// Create a new attempt entry
+			const attempt = await prisma.attempt.create({
+				data: {
+					points: score,
+					authorId: dbUser.id,
+				}
+			});
+
+			// Add points to user's balance
+			await prisma.user.update({
+				where: { id: dbUser.id },
+				data: {
+					pointsBalance: { increment: score },
+				},
+			});
+
+			const best = await prisma.attempt.aggregate({
+				where: { authorId: dbUser.id },
+				_max: { points: true },
+			});
+
+			return { current: attempt, best: best._max };
 		});
 
-		if (dbUser) {
-			dbUser = await prisma.user.update({
-				where: {
-					telegramId,
-				},
-				data: {
-					telegramId,
-					name: telegramUser?.first_name || '',
-					pointsBalance: dbUser.pointsBalance ?? 0,
-				},
-			});
-		} else {
-			// New user creation
-			dbUser = await prisma.user.create({
-				data: {
-					telegramId,
-					name: telegramUser?.first_name || '',
-					pointsBalance: 0,
-				},
-			});
-		}
-
-		return NextResponse.json(dbUser);
+		return NextResponse.json(result);
 	} catch (error) {
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === 'P2002') {
