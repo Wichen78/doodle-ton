@@ -1,4 +1,6 @@
-// hooks/api/useGetUser.ts
+// hooks/api/useAPIUser.ts
+
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -14,7 +16,7 @@ const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			telegramInitData: params.initData,
+			telegramInitData: params.telegramInitData,
 		}),
 	});
 	return response.json();
@@ -30,17 +32,17 @@ export const useLazyGetUser = () => {
 	});
 
 	useEffect(() => {
-		if (query.data && queryParams?.initData) {
+		if (query.data && queryParams?.telegramInitData) {
 			const initialState: InitialGameState = {
-				userTelegramInitData: queryParams?.initData,
+				userTelegramInitData: queryParams?.telegramInitData,
 				userTelegramName: query.data.name,
 				points: query.data.pointsBalance,
 			};
 			initializeState(initialState);
 		}
-	}, [initializeState, query.data, queryParams?.initData]);
+	}, [query.data, queryParams?.telegramInitData]);
 
-	const fetchTGUser = async () => {
+	const fetchUserTelegram = async () => {
 		try {
 			let initData: string | null = null;
 
@@ -56,7 +58,7 @@ export const useLazyGetUser = () => {
 
 			if (!initData) return;
 
-			fetchUserWithParams({ initData });
+			fetchUserWithParams({ telegramInitData: initData });
 		} catch (error) {
 			console.error('Error fetching user data:', error);
 		}
@@ -67,5 +69,5 @@ export const useLazyGetUser = () => {
 		query.refetch();
 	};
 
-	return { ...query, initData: queryParams?.initData, fetchTGUser };
+	return { fetchUserTelegram };
 };

@@ -4,14 +4,16 @@
 
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { UAParser } from 'ua-parser-js';
-import { useLazyGetUser } from '@/hooks/api/useGetUser.ts';
+import { useLazyGetUser } from '@/hooks/api/useAPIUser.ts';
+import { useGameStore } from '@/utils/game-mechanics.ts';
 import Game from '@/components/Game/Game.tsx';
 import Loading from '@/components/Loading/Loading.tsx';
 import Navigation from '@/components/Navigation/Navigation.tsx';
 
 const Dashboard: FC = () => {
+	const { userTelegramInitData } = useGameStore();
+	const { fetchUserTelegram } = useLazyGetUser();
 	const [currentView, setCurrentViewState] = useState<string>('loading');
-	const { fetchTGUser, initData } = useLazyGetUser();
 
 	const parser = new UAParser();
 	const device = parser.getDevice();
@@ -19,7 +21,7 @@ const Dashboard: FC = () => {
 
 	useEffect(() => {
 		if (isAppropriateDevice) {
-			fetchTGUser();
+			fetchUserTelegram();
 		}
 	}, []);
 
@@ -46,7 +48,7 @@ const Dashboard: FC = () => {
 		);
 	}
 
-	if (!initData) {
+	if (!userTelegramInitData) {
 		return (
 			<Loading />
 		);
