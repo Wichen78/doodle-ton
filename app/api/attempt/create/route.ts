@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 	const body = await req.json();
 	const { telegramInitData, score } = body;
 
-	if (!telegramInitData || !score) {
+	if (!telegramInitData || isNaN(Number(score))) {
 		return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
 	}
 

@@ -24,25 +24,30 @@ const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 
 export const useLazyGetUser = () => {
 	const initializeState = useGameStore((state: GameState) => state.initializeState);
-	const [queryParams, setQueryParams] = useState<GetUserQueryParams | null>(null);
+	const [initDataKey, setInitDataKey] = useState<string>('');
 	const query = useQuery({
-		queryKey: GET_USER_KEY,
-		queryFn: () => queryParams && fetchUser(queryParams),
+		queryKey: GET_USER_KEY.concat(initDataKey),
+		queryFn: ({ queryKey }) => fetchUser({ telegramInitData: queryKey[1] }),
 		enabled: false,
 	});
 
 	useEffect(() => {
-		if (query.data && queryParams?.telegramInitData) {
-			const initialState: InitialGameState = {
-				userTelegramInitData: queryParams?.telegramInitData,
-				userTelegramName: query.data.name,
-				points: query.data.pointsBalance,
-			};
-			initializeState(initialState);
+		if (initDataKey) {
+			query.refetch().then((res) => {
+				if (res.isSuccess) {
+					const initialState: InitialGameState = {
+						userTelegramInitData: initDataKey,
+						userTelegramName: res.data.name,
+						points: res.data.pointsBalance,
+					};
+					initializeState(initialState);
+				}
+			});
 		}
-	}, [query.data, queryParams?.telegramInitData]);
+	}, [initDataKey]);
 
 	const fetchUserTelegram = async () => {
+		if (initDataKey !== '') return;
 		try {
 			let initData: string | null = null;
 
@@ -58,15 +63,10 @@ export const useLazyGetUser = () => {
 
 			if (!initData) return;
 
-			fetchUserWithParams({ telegramInitData: initData });
+			setInitDataKey(initData);
 		} catch (error) {
 			console.error('Error fetching user data:', error);
 		}
-	};
-
-	const fetchUserWithParams = (params: GetUserQueryParams) => {
-		setQueryParams(params);
-		query.refetch();
 	};
 
 	return { fetchUserTelegram };

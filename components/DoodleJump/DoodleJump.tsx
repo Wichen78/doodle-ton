@@ -20,7 +20,7 @@ const DoodleJump: FC = () => {
 		if (gameEnded && score >= 0) {
 			createAttempt.mutate({ telegramInitData: userTelegramInitData, score });
 		}
-	}, [gameEnded, score]);
+	}, [gameEnded]);
 
 	const onPlay = () => {
 		requestAccess();
@@ -43,7 +43,7 @@ const DoodleJump: FC = () => {
 					<button
 						onClick={ onPlay }
 						className="px-10 py-8 rounded-2xl bg-gray-600">
-						<p className="text-4xl">PLAY</p>
+						<p className="text-4xl">{ score < 0 ? 'PLAY' : 'REPLAY' }</p>
 					</button>
 					{ !best.isPending && best.isSuccess && <p className="text-2xl">Best: { best.data?.points }</p> }
 				</div>

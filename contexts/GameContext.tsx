@@ -13,7 +13,7 @@ type GameContextType = {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
-	const [score, setScore] = useState<number>(0);
+	const [score, setScore] = useState<number>(-1);
 
 	const increaseScore = (value: number) => {
 		setScore(prev => prev + value);
