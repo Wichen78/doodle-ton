@@ -2,9 +2,9 @@
 
 'use client';
 
-import { NavigationProps } from '@/types';
-import DoodleJump from '@/components/DoodleJump/DoodleJump.tsx';
 import { FC } from 'react';
+import { NavigationProps } from '@/types';
+import DoodleJump from '@/components/DoodleJump/DoodleJump';
 
 const Game: FC<NavigationProps> = ({ currentView, setCurrentViewAction }) => {
 	console.log(currentView, setCurrentViewAction);

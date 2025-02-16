@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { prisma } from '@/utils/prisma';
-import { validateTelegramWebAppData } from '@/utils/server-checks.ts';
+import { validateTelegramWebAppData } from '@/utils/server-checks';
 
 export async function POST(req: Request) {
 	const body = await req.json();
