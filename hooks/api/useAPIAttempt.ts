@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AttemptResponse } from '@/types/api';
 import { GET_ATTEMPT } from '@/types/queryKey';
 import { CreateAttemptQueryParams, GetAttemptQueryParams } from '@/types/queryParams';
-import { useGameStore } from '@/utils/game-mechanics.ts';
+import { useGameStore } from '@/utils/game-mechanics';
 
 const fetchAttemptBest = async (params: GetAttemptQueryParams): Promise<AttemptResponse> => {
 	const response = await fetch(`/api/attempt/best?telegramInitData=${ encodeURIComponent(params.telegramInitData) }`);

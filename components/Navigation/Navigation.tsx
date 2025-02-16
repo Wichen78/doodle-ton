@@ -4,10 +4,10 @@
 
 import { FC } from 'react';
 import { IconProps, NavigationProps } from '@/types';
-import Game from '@/assets/icons/Game.tsx';
-import Mine from '@/assets/icons/Mine.tsx';
-import Friends from '@/assets/icons/Friends.tsx';
-import Coins from '@/assets/icons/Coins.tsx';
+import Game from '@/assets/icons/Game';
+import Mine from '@/assets/icons/Mine';
+import Friends from '@/assets/icons/Friends';
+import Coins from '@/assets/icons/Coins';
 
 type NavItem = {
 	name: string;

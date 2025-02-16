@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { UserResponse } from '@/types/api';
 import { GET_USER_KEY } from '@/types/queryKey';
 import { GetUserQueryParams } from '@/types/queryParams';
-import { GameState, InitialGameState, useGameStore } from '@/utils/game-mechanics.ts';
+import { GameState, InitialGameState, useGameStore } from '@/utils/game-mechanics';
 
 const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 	const response = await fetch('/api/user', {
@@ -39,6 +39,7 @@ export const useLazyGetUser = () => {
 						userTelegramInitData: initDataKey,
 						userTelegramName: res.data.name,
 						points: res.data.pointsBalance,
+						isCompleted: true,
 					};
 					initializeState(initialState);
 				}
@@ -47,7 +48,6 @@ export const useLazyGetUser = () => {
 	}, [initDataKey]);
 
 	const fetchUserTelegram = async () => {
-		if (initDataKey !== '') return;
 		try {
 			let initData: string | null = null;
 
@@ -61,11 +61,14 @@ export const useLazyGetUser = () => {
 				initData = 'temp';
 			}
 
-			if (!initData) return;
-
-			setInitDataKey(initData);
+			if (!initData) {
+				initializeState({ isCompleted: true });
+			} else {
+				setInitDataKey(initData);
+			}
 		} catch (error) {
 			console.error('Error fetching user data:', error);
+			initializeState({ isCompleted: true });
 		}
 	};
 

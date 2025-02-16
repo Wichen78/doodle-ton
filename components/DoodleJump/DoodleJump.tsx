@@ -4,10 +4,10 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import GameCanvas from '@/components/DoodleJump/GameCanvas';
-import { useDeviceOrientation } from '@/hooks/useDeviceOrientation.ts';
-import { useAPIAttempt } from '@/hooks/api/useAPIAttempt.ts';
-import { useGame } from '@/contexts/GameContext.tsx';
-import { useGameStore } from '@/utils/game-mechanics.ts';
+import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
+import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
+import { useGame } from '@/contexts/GameContext';
+import { useGameStore } from '@/utils/game-mechanics';
 
 const DoodleJump: FC = () => {
 	const { orientation, requestAccess } = useDeviceOrientation();

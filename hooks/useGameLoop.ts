@@ -5,8 +5,8 @@
 import { RefObject, useEffect, useRef } from 'react';
 import { DoodlePlayer } from '@/types';
 import { addNewPlatforms, initializePlatforms, updatePlatforms } from '@/utils/platformUtils';
-import { updatePlayers } from '@/utils/playerUtils.ts';
-import { useGame } from '@/contexts/GameContext.tsx';
+import { updatePlayers } from '@/utils/playerUtils';
+import { useGame } from '@/contexts/GameContext';
 
 export const useGameLoop = (
 	canvasRef: RefObject<HTMLCanvasElement>,
