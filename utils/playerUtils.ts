@@ -5,20 +5,13 @@ import { DoodlePlayer } from '@/types';
 export const updatePlayers = (
 	context: CanvasRenderingContext2D,
 	doodle: DoodlePlayer,
-	playerImage: HTMLImageElement | null,
+	playerRightImageRef: HTMLImageElement | null,
+	playerLeftImageRef: HTMLImageElement | null,
 ) => {
-	if (playerImage) {
-		context.drawImage(
-			playerImage,
-			0,
-			0,
-			playerImage.width,
-			playerImage.height,
-			doodle.x,
-			doodle.y,
-			doodle.width,
-			doodle.height
-		);
+	const imageRef = doodle.dx >= 0 ? playerRightImageRef : playerLeftImageRef;
+
+	if (imageRef) {
+		context.drawImage(imageRef, doodle.x, doodle.y, doodle.width, doodle.height);
 	} else {
 		context.fillStyle = 'yellow';
 		context.fillRect(doodle.x, doodle.y, doodle.width, doodle.height);

@@ -51,7 +51,7 @@ export const updatePlatforms = (
 	// Update and draw each platform
 	platforms.forEach((platform) => {
 		if (platformImage) {
-			context.drawImage(platformImage, 0, 0, platformImage.width, platformImage.height, platform.x, platform.y, PLATFORM.width, PLATFORM.height);
+			context.drawImage(platformImage, platform.x, platform.y, PLATFORM.width, PLATFORM.height);
 		} else {
 			context.fillStyle = 'green';
 			context.fillRect(platform.x, platform.y, PLATFORM.width, PLATFORM.height);
