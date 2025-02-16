@@ -18,21 +18,33 @@ export const useGameLoop = (
 	const prevDoodleY = useRef(0);
 	const platforms = useRef<{ x: number; y: number }[]>([]);
 	const loopId = useRef<number | null>(null); // Ref pour stocker l'ID de l'animation
-	const playerImageRef = useRef<HTMLImageElement | null>(null);
+	const playerRightImageRef = useRef<HTMLImageElement | null>(null);
+	const playerLeftImageRef = useRef<HTMLImageElement | null>(null);
 	const platformImageRef = useRef<HTMLImageElement | null>(null);
+	const backgroundImageRef = useRef<HTMLImageElement | null>(null);
 	const { increaseScore, resetScore } = useGame();
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
-			const imgPlayer = new Image();
-			imgPlayer.src = 'players/default.png';
-			imgPlayer.style.objectFit = 'contain';
-			playerImageRef.current = imgPlayer;
+			const imgPlayerRight = new Image();
+			imgPlayerRight.src = 'players/default/right.svg';
+			imgPlayerRight.style.objectFit = 'contain';
+			playerRightImageRef.current = imgPlayerRight;
+
+			const imgPlayerLeft = new Image();
+			imgPlayerLeft.src = 'players/default/left.svg';
+			imgPlayerLeft.style.objectFit = 'contain';
+			playerLeftImageRef.current = imgPlayerLeft;
 
 			const imgPlatform = new Image();
 			imgPlatform.src = 'platforms/default.png';
 			imgPlatform.style.objectFit = 'contain';
 			platformImageRef.current = imgPlatform;
+
+			const imgBackground = new Image();
+			imgBackground.src = 'backgrounds/default.svg';
+			imgBackground.style.objectFit = 'contain';
+			backgroundImageRef.current = imgBackground;
 		}
 	}, []);
 
@@ -87,6 +99,10 @@ export const useGameLoop = (
 
 			context.clearRect(0, 0, canvas.width, canvas.height);
 
+			if (backgroundImageRef.current) {
+				context.drawImage(backgroundImageRef.current, 0, 0, canvas.width, canvas.height);
+			}
+
 			doodle.dy += gravity;
 
 			if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
@@ -129,7 +145,8 @@ export const useGameLoop = (
 			updatePlayers(
 				context,
 				doodle,
-				playerImageRef.current
+				playerRightImageRef.current,
+				playerLeftImageRef.current,
 			);
 
 			// Mettre à jour prevDoodleY
