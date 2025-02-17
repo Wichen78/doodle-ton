@@ -37,7 +37,7 @@ export function validateTelegramWebAppData(telegramInitData: string): Validation
 
 		initData.delete('hash');
 
-		// Check if auth_date is present and not older than 3 hours
+		// Check if auth_date is present and not older than 1 week
 		const authDate = initData.get('auth_date');
 		if (!authDate) {
 			return { message: 'auth_date is missing from initData', validatedData: null, user: {} };
@@ -46,10 +46,10 @@ export function validateTelegramWebAppData(telegramInitData: string): Validation
 		const authTimestamp = parseInt(authDate, 10);
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		const timeDifference = currentTimestamp - authTimestamp;
-		const threeHoursInSeconds = 3 * 60 * 60;
+		const OneWeekInSeconds = 7 * 24 * 60 * 60;
 
-		if (timeDifference > threeHoursInSeconds) {
-			return { message: 'Telegram data is older than 3 hours', validatedData: null, user: {} };
+		if (timeDifference > OneWeekInSeconds) {
+			return { message: 'Telegram data is older than 1 week', validatedData: null, user: {} };
 		}
 
 		validatedData = Object.fromEntries(initData.entries());
