@@ -21,6 +21,8 @@ export function validateTelegramWebAppData(telegramInitData: string): Validation
 	let user: User = {};
 	let message = '';
 
+	console.log('telegramInitData', telegramInitData);
+
 	if (process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH === 'true') {
 		validatedData = { temp: '' };
 		user = { id: 'undefined', username: 'Unknown User' };
