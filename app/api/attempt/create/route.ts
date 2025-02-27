@@ -7,9 +7,9 @@ import { validateTelegramWebAppData } from '@/utils/server-checks';
 
 export async function POST(req: Request) {
 	const body = await req.json();
-	const { telegramInitData, score } = body;
+	const { telegramInitData, score, star } = body;
 
-	if (!telegramInitData || isNaN(Number(score))) {
+	if (!telegramInitData || isNaN(Number(score)) || isNaN(Number(star))) {
 		return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
 	}
 
@@ -49,6 +49,7 @@ export async function POST(req: Request) {
 				where: { id: dbUser.id },
 				data: {
 					pointsBalance: { increment: score },
+					starsBalance: { increment: star },
 				},
 			});
 

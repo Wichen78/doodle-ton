@@ -12,6 +12,7 @@ model User {
   telegramId    String  @unique
   name          String?
   pointsBalance Int     @default(0)
+  starsBalance  Int     @default(0)
 
   // Relation
   attempts Attempt[]
@@ -22,6 +23,7 @@ model Attempt {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   points    Int
+  stars     Int
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  String?  @db.ObjectId
 }

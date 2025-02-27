@@ -40,6 +40,7 @@ export async function POST(req: Request) {
 					telegramId,
 					name: telegramUser?.first_name || '',
 					pointsBalance: dbUser.pointsBalance ?? 0,
+					starsBalance: dbUser.starsBalance ?? 0,
 				},
 			});
 		} else {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
 					telegramId,
 					name: telegramUser?.first_name || '',
 					pointsBalance: 0,
+					starsBalance: 0,
 				},
 			});
 		}

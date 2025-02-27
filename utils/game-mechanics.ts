@@ -7,6 +7,7 @@ export interface GameState {
 	userTelegramInitData: string;
 	userTelegramName: string;
 	points: number;
+	stars: number;
 	increase: (by: number) => void;
 	initializeState: (initialState: Partial<GameState>) => void;
 	isCompleted: boolean;
@@ -16,6 +17,7 @@ export interface InitialGameState {
 	userTelegramInitData: string;
 	userTelegramName: string;
 	points: number;
+	stars: number;
 	isCompleted: boolean;
 }
 
@@ -26,6 +28,7 @@ export const useGameStore = create<GameState>()(
 				userTelegramInitData: '',
 				userTelegramName: '',
 				points: 0,
+				stars: 0,
 				increase: (by) => set((state) => ({ points: state.points + by })),
 				initializeState: (initialState) => set((state) => ({ ...state, ...initialState })),
 				isCompleted: false,

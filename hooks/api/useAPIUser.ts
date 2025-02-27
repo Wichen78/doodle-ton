@@ -39,6 +39,7 @@ export const useLazyGetUser = () => {
 						userTelegramInitData: initDataKey,
 						userTelegramName: res.data.name,
 						points: res.data.pointsBalance,
+						stars: res.data.starsBalance,
 						isCompleted: true,
 					};
 					initializeState(initialState);
