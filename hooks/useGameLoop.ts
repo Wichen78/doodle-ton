@@ -4,8 +4,9 @@
 
 import { RefObject, useEffect, useRef } from 'react';
 import { DoodlePlayer } from '@/types';
-import { addNewPlatforms, initializePlatforms, updatePlatforms } from '@/utils/platformUtils';
-import { updatePlayers } from '@/utils/playerUtils';
+import { usePlatforms } from '@/hooks/usePlatforms';
+import { loadImage, updatePlayers } from '@/utils/playerUtils';
+import { ElementType } from '@/utils/consts';
 import { useGame } from '@/contexts/GameContext';
 
 export const useGameLoop = (
@@ -16,49 +17,38 @@ export const useGameLoop = (
 ) => {
 	const playerDir = useRef(0);
 	const prevDoodleY = useRef(0);
-	const platforms = useRef<{ x: number; y: number }[]>([]);
-	const loopId = useRef<number | null>(null); // Ref pour stocker l'ID de l'animation
-	const playerRightImageRef = useRef<HTMLImageElement | null>(null);
-	const playerLeftImageRef = useRef<HTMLImageElement | null>(null);
-	const platformImageRef = useRef<HTMLImageElement | null>(null);
-	const backgroundImageRef = useRef<HTMLImageElement | null>(null);
-	const { increaseScore, resetScore } = useGame();
+	const elements = useRef<{ x: number; y: number, type: ElementType }[]>([]);
+	const loopId = useRef<number | null>(null);
+	const images = useRef<Record<string, HTMLImageElement | null>>({
+		playerRight: null,
+		playerLeft: null,
+		platform: null,
+		background: null,
+		star: null
+	});
+	const { resetGame } = useGame();
+	const { addNewElements, initializePlatforms, updateElements } = usePlatforms();
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
-			const imgPlayerRight = new Image();
-			imgPlayerRight.src = 'players/default/right.svg';
-			imgPlayerRight.style.objectFit = 'contain';
-			playerRightImageRef.current = imgPlayerRight;
-
-			const imgPlayerLeft = new Image();
-			imgPlayerLeft.src = 'players/default/left.svg';
-			imgPlayerLeft.style.objectFit = 'contain';
-			playerLeftImageRef.current = imgPlayerLeft;
-
-			const imgPlatform = new Image();
-			imgPlatform.src = 'platforms/default.png';
-			imgPlatform.style.objectFit = 'contain';
-			platformImageRef.current = imgPlatform;
-
-			const imgBackground = new Image();
-			imgBackground.src = 'backgrounds/default.svg';
-			imgBackground.style.objectFit = 'contain';
-			backgroundImageRef.current = imgBackground;
+			images.current = {
+				playerRight: loadImage('players/default/right.svg'),
+				playerLeft: loadImage('players/default/left.svg'),
+				platform: loadImage('platforms/default.png'),
+				background: loadImage('backgrounds/default.svg'),
+				star: loadImage('star.svg'),
+			};
 		}
 	}, []);
 
-	const resetGame = () => {
+	const restoreGame = () => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		resetScore();
-		platforms.current = initializePlatforms(canvas);
+		resetGame();
+		elements.current = initializePlatforms(canvas);
 		prevDoodleY.current = canvas.height - 110;
-		const context = canvas.getContext('2d');
-		if (context) {
-			context.clearRect(0, 0, canvas.width, canvas.height);
-		}
+		canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
 	useEffect(() => {
@@ -79,7 +69,7 @@ export const useGameLoop = (
 		const bounceVelocity = -37.5;
 
 		// Initialiser ou réinitialiser les plateformes
-		platforms.current = initializePlatforms(canvas);
+		elements.current = initializePlatforms(canvas);
 
 		// Créer un objet doodle
 		const doodle: DoodlePlayer = {
@@ -98,58 +88,27 @@ export const useGameLoop = (
 			}
 
 			context.clearRect(0, 0, canvas.width, canvas.height);
-
-			if (backgroundImageRef.current) {
-				context.drawImage(backgroundImageRef.current, 0, 0, canvas.width, canvas.height);
+			if (images.current.background) {
+				context.drawImage(images.current.background, 0, 0, canvas.width, canvas.height);
 			}
 
 			doodle.dy += gravity;
-
 			if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
-				platforms.current = platforms.current.map((platform) => ({
-					...platform,
-					y: platform.y - doodle.dy / 2,
-				}));
-
-				platforms.current = addNewPlatforms(canvas, platforms.current);
+				elements.current = elements.current.map((el) => ({ ...el, y: el.y - doodle.dy / 2 }));
+				elements.current = addNewElements(canvas, elements.current);
 			} else {
 				doodle.y += doodle.dy;
 			}
 
-			// Gestion du mouvement du joueur
-			if (playerDir.current < 0) {
-				doodle.dx = -9;
-			} else if (playerDir.current > 0) {
-				doodle.dx = 9;
-			} else {
-				doodle.dx *= 0.9;
-			}
-			doodle.x += doodle.dx;
+			doodle.dx = playerDir.current * 9 || doodle.dx * 0.9;
+			doodle.x = (doodle.x + doodle.dx + canvas.width) % canvas.width;
 
-			if (doodle.x + doodle.width < 0) doodle.x = canvas.width;
-			else if (doodle.x > canvas.width) doodle.x = -doodle.width;
-
-			// Mettre à jour les plateformes et détecter les collisions
-			const { visiblePlatforms, removedCount } = updatePlatforms(
-				context,
-				canvas,
-				platforms.current,
-				doodle,
-				prevDoodleY.current,
-				bounceVelocity,
-				platformImageRef.current
-			);
-			platforms.current = visiblePlatforms;
-			increaseScore(removedCount);
-
-			updatePlayers(
-				context,
-				doodle,
-				playerRightImageRef.current,
-				playerLeftImageRef.current,
+			elements.current = updateElements(
+				context, canvas, elements.current, doodle, prevDoodleY.current,
+				bounceVelocity, images.current.platform, images.current.star
 			);
 
-			// Mettre à jour prevDoodleY
+			updatePlayers(context, doodle, images.current.playerRight, images.current.playerLeft);
 			prevDoodleY.current = doodle.y;
 
 			// Loop or Stop
@@ -162,7 +121,7 @@ export const useGameLoop = (
 
 		// Replay
 		if (!gameEnded) {
-			resetGame();
+			restoreGame();
 			loopId.current = requestAnimationFrame(loop);
 		}
 
@@ -172,7 +131,6 @@ export const useGameLoop = (
 	}, [canvasRef, gameEnded, setGameEndedAction]);
 
 	useEffect(() => {
-		const gamma = orientation?.gamma || 0;
-		playerDir.current = gamma < -10 ? -1 : gamma > 10 ? 1 : 0;
+		playerDir.current = orientation?.gamma ? Math.sign(orientation.gamma) : 0;
 	}, [orientation]);
 };

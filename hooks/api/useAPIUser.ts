@@ -5,8 +5,8 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { UserResponse } from '@/types/api';
-import { GET_USER_KEY } from '@/types/queryKey';
-import { GetUserQueryParams } from '@/types/queryParams';
+import { GET_USER, GET_USER_KEY } from '@/types/queryKey';
+import { GetAttemptQueryParams, GetUserQueryParams } from '@/types/queryParams';
 import { GameState, InitialGameState, useGameStore } from '@/utils/game-mechanics';
 
 const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
@@ -19,6 +19,11 @@ const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 			telegramInitData: params.telegramInitData,
 		}),
 	});
+	return response.json();
+};
+
+const fetchUserBalance = async (params: GetAttemptQueryParams): Promise<UserResponse> => {
+	const response = await fetch(`/api/user/balance?telegramInitData=${ encodeURIComponent(params.telegramInitData) }`);
 	return response.json();
 };
 
@@ -39,6 +44,7 @@ export const useLazyGetUser = () => {
 						userTelegramInitData: initDataKey,
 						userTelegramName: res.data.name,
 						points: res.data.pointsBalance,
+						stars: res.data.starsBalance,
 						isCompleted: true,
 					};
 					initializeState(initialState);
@@ -73,4 +79,15 @@ export const useLazyGetUser = () => {
 	};
 
 	return { fetchUserTelegram };
+};
+
+export const useAPIUser = () => {
+	const { userTelegramInitData } = useGameStore();
+
+	const balance = useQuery({
+		queryKey: GET_USER.BALANCE_KEY,
+		queryFn: () => fetchUserBalance({ telegramInitData: userTelegramInitData }),
+	});
+
+	return { balance };
 };
