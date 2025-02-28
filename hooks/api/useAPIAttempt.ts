@@ -21,7 +21,8 @@ const createAttempt = async (params: CreateAttemptQueryParams): Promise<AttemptR
 		},
 		body: JSON.stringify({
 			telegramInitData: params.telegramInitData,
-			score: params.score,
+			points: params.score,
+			stars: params.starScore,
 		}),
 	});
 	return response.json();

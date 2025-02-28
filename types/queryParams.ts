@@ -9,4 +9,5 @@ export interface GetAttemptQueryParams {
 export interface CreateAttemptQueryParams {
 	telegramInitData: string;
 	score: number;
+	starScore: number;
 }

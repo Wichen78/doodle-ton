@@ -12,13 +12,13 @@ import { useGameStore } from '@/utils/game-mechanics';
 const DoodleJump: FC = () => {
 	const { orientation, requestAccess } = useDeviceOrientation();
 	const { userTelegramInitData } = useGameStore();
-	const { score } = useGame();
+	const { score, starScore } = useGame();
 	const { best, createAttempt } = useAPIAttempt();
 	const [gameEnded, setGameEnded] = useState<boolean>(true);
 
 	useEffect(() => {
 		if (gameEnded && score >= 0) {
-			createAttempt.mutate({ telegramInitData: userTelegramInitData, score });
+			createAttempt.mutate({ telegramInitData: userTelegramInitData, score, starScore });
 		}
 	}, [gameEnded]);
 
@@ -39,7 +39,12 @@ const DoodleJump: FC = () => {
 				<div
 					className="flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 					{ !createAttempt.isPending && createAttempt.isSuccess &&
-						<p className="text-2xl">Score: { createAttempt.data?.points }</p> }
+						(
+							<>
+								<p className="text-2xl">Score: { createAttempt.data?.points }</p>
+								<p className="text-2xl">Star: { createAttempt.data?.stars }</p>
+							</>
+						) }
 					<button
 						onClick={ onPlay }
 						className="px-10 py-8 rounded-2xl bg-gray-600">

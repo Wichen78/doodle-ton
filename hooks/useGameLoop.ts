@@ -22,7 +22,7 @@ export const useGameLoop = (
 	const playerLeftImageRef = useRef<HTMLImageElement | null>(null);
 	const platformImageRef = useRef<HTMLImageElement | null>(null);
 	const backgroundImageRef = useRef<HTMLImageElement | null>(null);
-	const { increaseScore, resetScore } = useGame();
+	const { increaseScore, resetGame } = useGame();
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -48,11 +48,11 @@ export const useGameLoop = (
 		}
 	}, []);
 
-	const resetGame = () => {
+	const restoreGame = () => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		resetScore();
+		resetGame();
 		platforms.current = initializePlatforms(canvas);
 		prevDoodleY.current = canvas.height - 110;
 		const context = canvas.getContext('2d');
@@ -162,7 +162,7 @@ export const useGameLoop = (
 
 		// Replay
 		if (!gameEnded) {
-			resetGame();
+			restoreGame();
 			loopId.current = requestAnimationFrame(loop);
 		}
 
