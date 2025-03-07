@@ -7,9 +7,9 @@ import { validateTelegramWebAppData } from '@/utils/server-checks';
 
 export async function POST(req: Request) {
 	const body = await req.json();
-	const { telegramInitData, score } = body;
+	const { telegramInitData, points, stars } = body;
 
-	if (!telegramInitData || isNaN(Number(score))) {
+	if (!telegramInitData || isNaN(Number(points)) || isNaN(Number(stars))) {
 		return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
 	}
 
@@ -39,7 +39,8 @@ export async function POST(req: Request) {
 			// Create a new attempt entry
 			const attempt = await prisma.attempt.create({
 				data: {
-					points: score,
+					points: points,
+					stars: stars,
 					authorId: dbUser.id,
 				}
 			});
@@ -48,7 +49,8 @@ export async function POST(req: Request) {
 			await prisma.user.update({
 				where: { id: dbUser.id },
 				data: {
-					pointsBalance: { increment: score },
+					pointsBalance: { increment: points },
+					starsBalance: { increment: stars },
 				},
 			});
 

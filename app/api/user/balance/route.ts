@@ -1,14 +1,13 @@
-// app/api/user/route.ts
+// app/api/user/balance/route.ts
 
 import { NextResponse } from 'next/server';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/binary';
-
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { prisma } from '@/utils/prisma';
 import { validateTelegramWebAppData } from '@/utils/server-checks';
 
-export async function POST(req: Request) {
-	const body = await req.json();
-	const { telegramInitData } = body;
+export async function GET(req: Request) {
+	const url = new URL(req.url);
+	const telegramInitData = url.searchParams.get('telegramInitData');
 
 	if (!telegramInitData) {
 		return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
@@ -27,35 +26,16 @@ export async function POST(req: Request) {
 	}
 
 	try {
-		let dbUser = await prisma.user.findUnique({
+		// Find the user
+		const dbUser = await prisma.user.findUnique({
 			where: { telegramId },
 		});
 
-		if (dbUser) {
-			dbUser = await prisma.user.update({
-				where: {
-					telegramId,
-				},
-				data: {
-					telegramId,
-					name: telegramUser?.first_name || '',
-					pointsBalance: dbUser.pointsBalance ?? 0,
-					starsBalance: dbUser.starsBalance ?? 0,
-				},
-			});
-		} else {
-			// New user creation
-			dbUser = await prisma.user.create({
-				data: {
-					telegramId,
-					name: telegramUser?.first_name || '',
-					pointsBalance: 0,
-					starsBalance: 0,
-				},
-			});
+		if (!dbUser) {
+			throw new Error('User not found');
 		}
 
-		return NextResponse.json(dbUser);
+		return NextResponse.json({ pointsBalance: dbUser.pointsBalance, starsBalance: dbUser.starsBalance });
 	} catch (error) {
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === 'P2002') {
@@ -63,7 +43,7 @@ export async function POST(req: Request) {
 				return NextResponse.json({ error: 'User already exists' }, { status: 409 });
 			}
 		}
-		console.error('Error fetching/creating user:', error);
-		return NextResponse.json({ error: 'Failed to fetch/create user' }, { status: 500 });
+		console.error('Error fetching best attempt:', error);
+		return NextResponse.json({ error: 'Failed to fetch best attempt' }, { status: 500 });
 	}
 }

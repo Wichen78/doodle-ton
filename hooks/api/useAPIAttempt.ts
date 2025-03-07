@@ -4,7 +4,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AttemptResponse } from '@/types/api';
-import { GET_ATTEMPT } from '@/types/queryKey';
+import { GET_ATTEMPT, GET_USER } from '@/types/queryKey';
 import { CreateAttemptQueryParams, GetAttemptQueryParams } from '@/types/queryParams';
 import { useGameStore } from '@/utils/game-mechanics';
 
@@ -21,7 +21,8 @@ const createAttempt = async (params: CreateAttemptQueryParams): Promise<AttemptR
 		},
 		body: JSON.stringify({
 			telegramInitData: params.telegramInitData,
-			score: params.score,
+			points: params.score,
+			stars: params.starScore,
 		}),
 	});
 	return response.json();
@@ -41,6 +42,9 @@ export const useAPIAttempt = () => {
 		onSuccess: (result) => {
 			if (getBest.data?.points && result.points > getBest.data?.points) {
 				queryClient.invalidateQueries({ queryKey: GET_ATTEMPT.BEST_KEY });
+			}
+			if (result.stars > 0) {
+				queryClient.invalidateQueries({ queryKey: GET_USER.BALANCE_KEY });
 			}
 		},
 		onError: (error) => {

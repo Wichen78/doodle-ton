@@ -6,19 +6,21 @@ import React, { FC, useEffect, useState } from 'react';
 import GameCanvas from '@/components/DoodleJump/GameCanvas';
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
+import { useAPIUser } from '@/hooks/api/useAPIUser';
 import { useGame } from '@/contexts/GameContext';
 import { useGameStore } from '@/utils/game-mechanics';
 
 const DoodleJump: FC = () => {
 	const { orientation, requestAccess } = useDeviceOrientation();
 	const { userTelegramInitData } = useGameStore();
-	const { score } = useGame();
+	const { score, starScore } = useGame();
 	const { best, createAttempt } = useAPIAttempt();
+	const { balance } = useAPIUser();
 	const [gameEnded, setGameEnded] = useState<boolean>(true);
 
 	useEffect(() => {
 		if (gameEnded && score >= 0) {
-			createAttempt.mutate({ telegramInitData: userTelegramInitData, score });
+			createAttempt.mutate({ telegramInitData: userTelegramInitData, score, starScore });
 		}
 	}, [gameEnded]);
 
@@ -31,7 +33,7 @@ const DoodleJump: FC = () => {
 		<>
 			{
 				!gameEnded && (
-					<p className="absolute inset-y-4 left-1/2 -translate-x-1/2 text-3xl">{ score }</p>
+					<p className="absolute inset-y-4 left-1/2 -translate-x-1/2 text-3xl">{ score } | { starScore }</p>
 				)
 			}
 			<GameCanvas orientation={ orientation } gameEnded={ gameEnded } setGameEndedAction={ setGameEnded } />
@@ -39,13 +41,20 @@ const DoodleJump: FC = () => {
 				<div
 					className="flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 					{ !createAttempt.isPending && createAttempt.isSuccess &&
-						<p className="text-2xl">Score: { createAttempt.data?.points }</p> }
+						(
+							<>
+								<p className="text-2xl">Score: { createAttempt.data?.points }</p>
+								<p className="text-2xl">Star: { createAttempt.data?.stars }</p>
+							</>
+						) }
 					<button
 						onClick={ onPlay }
 						className="px-10 py-8 rounded-2xl bg-gray-600">
 						<p className="text-4xl">{ score < 0 ? 'PLAY' : 'REPLAY' }</p>
 					</button>
 					{ !best.isPending && best.isSuccess && <p className="text-2xl">Best: { best.data?.points }</p> }
+					{ !balance.isPending && balance.isSuccess &&
+						<p className="text-2xl">Star Balance: { balance.data?.starsBalance }</p> }
 				</div>
 			) }
 		</>
