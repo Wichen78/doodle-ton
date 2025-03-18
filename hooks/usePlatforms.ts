@@ -3,10 +3,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { DoodlePlayer } from '@/types';
-import { ElementType, PLATFORM, STAR } from '@/utils/consts';
-import { drawElement, getNextElementType, isColliding, random } from '@/utils/playerUtils';
 import { useGame } from '@/contexts/GameContext';
+import { ElementType, GameDifficulty, PLATFORM, STAR } from '@/utils/consts';
+import { drawElement, getNextElementType, isColliding, random } from '@/utils/playerUtils';
+import { DoodlePlayer } from '@/types';
 
 export const usePlatforms = () => {
 	const { score, increaseStarScore, increaseScore } = useGame();
@@ -23,7 +23,9 @@ export const usePlatforms = () => {
 			type: ElementType.PLATFORM
 		}];
 
-		for (let y = platforms[0].y; y > 0; y -= PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace)) {
+		for (let y = platforms[0].y - (PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace));
+				 y > 0;
+				 y -= PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace)) {
 			platforms.push({
 				x: random(25, canvas.width - 25 - PLATFORM.width),
 				y,
@@ -56,7 +58,6 @@ export const usePlatforms = () => {
 		elements: { x: number; y: number, type: ElementType }[],
 		doodle: DoodlePlayer,
 		prevDoodleY: number,
-		bounceVelocity: number,
 		platformImage: HTMLImageElement | null,
 		starImage: HTMLImageElement | null
 	) => {
@@ -71,7 +72,7 @@ export const usePlatforms = () => {
 			if (element.type === ElementType.PLATFORM && doodle.dy > 0 &&
 				prevDoodleY + doodle.height <= element.y && isColliding(doodle, element, PLATFORM)) {
 				doodle.y = element.y - doodle.height;
-				doodle.dy = bounceVelocity;
+				doodle.dy = GameDifficulty.BOUNCE_VELOCITY;
 			}
 
 			return true;

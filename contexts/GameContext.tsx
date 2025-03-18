@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { createContext, FC, ReactNode, useContext, useState } from 'react';
+import { createContext, FC, ReactNode, useContext, useState } from 'react';
 
 type GameContextType = {
 	score: number;
@@ -25,7 +25,6 @@ export const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const increaseStarScore = (value: number) => {
 		setStarScore(prev => prev + value);
 	};
-
 
 	const resetGame = () => {
 		setScore(0);

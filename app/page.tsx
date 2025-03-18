@@ -7,9 +7,9 @@ import { UAParser } from 'ua-parser-js';
 import { QueryClient } from '@tanstack/query-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { GameProvider } from '@/contexts/GameContext';
-import Dashboard from '@/components/Dashboard/Dashboard';
 import Loading from '@/components/Loading/Loading';
 import { UserLoader } from '@/components/Loading/UserLoader';
+import DoodleJump from '@/components/DoodleJump/DoodleJump';
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,7 @@ const Page: FC = () => {
 			<QueryClientProvider client={ queryClient }>
 				<GameProvider>
 					<UserLoader>
-						<Dashboard />
+						<DoodleJump />
 					</UserLoader>
 				</GameProvider>
 			</QueryClientProvider>

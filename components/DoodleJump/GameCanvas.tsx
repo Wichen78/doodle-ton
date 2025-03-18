@@ -2,19 +2,20 @@
 
 'use client';
 
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useGameLoop } from '@/hooks/useGameLoop';
+import { GameStatus } from '@/utils/game-mechanics';
 
 interface GameCanvasProps {
 	orientation: DeviceOrientationEvent | null;
-	gameEnded: boolean;
-	setGameEndedAction: (gameEnded: boolean) => void;
+	gameStatus: GameStatus;
+	setGameStatus: (gameStatus: GameStatus) => void;
 }
 
-const GameCanvas: React.FC<GameCanvasProps> = ({ orientation, gameEnded, setGameEndedAction }) => {
+const GameCanvas: React.FC<GameCanvasProps> = ({ orientation, gameStatus, setGameStatus }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	useGameLoop(canvasRef, orientation, gameEnded, setGameEndedAction);
+	useGameLoop(canvasRef, orientation, gameStatus, setGameStatus);
 
 	return (
 		<canvas ref={ canvasRef } style={ { border: '1px solid black' } } />

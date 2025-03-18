@@ -1,9 +1,9 @@
 // app/layout.tsx
 
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './globals.css';
 import { ToastProvider } from '@/contexts/ToastContext';
-import { geist } from '@/app/utils/consts.ts';
+import { geist } from '@/app/utils/consts';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
