@@ -4,7 +4,7 @@
 
 import { FC } from 'react';
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
-import { useGame } from '@/contexts/GameContext';
+import { useGame } from '@/hooks/useGame';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
 import { GameStatus } from '@/utils/game-mechanics';
 

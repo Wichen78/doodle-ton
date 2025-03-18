@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { useLazyGetUser } from '@/hooks/api/useAPIUser';
 import { useGameStore } from '@/utils/game-mechanics';
 import Loading from '@/components/Loading/Loading';

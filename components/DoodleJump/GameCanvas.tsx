@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useRef } from 'react';
+import { FC, useRef } from 'react';
 import { useGameLoop } from '@/hooks/useGameLoop';
 import { GameStatus } from '@/utils/game-mechanics';
 
@@ -12,7 +12,7 @@ interface GameCanvasProps {
 	setGameStatus: (gameStatus: GameStatus) => void;
 }
 
-const GameCanvas: React.FC<GameCanvasProps> = ({ orientation, gameStatus, setGameStatus }) => {
+const GameCanvas: FC<GameCanvasProps> = ({ orientation, gameStatus, setGameStatus }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useGameLoop(canvasRef, orientation, gameStatus, setGameStatus);

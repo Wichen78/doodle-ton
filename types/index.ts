@@ -27,3 +27,11 @@ export interface NavigationProps {
 	currentView: string;
 	setCurrentViewAction: (view: string) => void;
 }
+
+export type GameContextType = {
+	score: number;
+	starScore: number;
+	increaseScore: (score: number) => void;
+	increaseStarScore: (score: number) => void;
+	resetGame: () => void;
+}

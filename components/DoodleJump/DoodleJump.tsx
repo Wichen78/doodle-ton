@@ -5,7 +5,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
-import { useGame } from '@/contexts/GameContext';
+import { useGame } from '@/hooks/useGame';
 import { GameStatus, useGameStore } from '@/utils/game-mechanics';
 import GameCanvas from '@/components/DoodleJump/GameCanvas';
 import TopBar from '@/components/TopBar/TopBar';

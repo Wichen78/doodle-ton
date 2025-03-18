@@ -7,8 +7,8 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './PlanetCarrousel.css';
-import { useAPIUser } from '@/hooks/api/useAPIUser.ts';
-import { getInitialSlide } from '@/utils/playerUtils.ts';
+import { useAPIUser } from '@/hooks/api/useAPIUser';
+import { getInitialSlide } from '@/utils/playerUtils';
 
 interface PlanetCarouselProps {
 	onPlay: () => void;
@@ -19,6 +19,8 @@ const PlanetCarousel: FC<PlanetCarouselProps> = ({ onPlay }) => {
 	const sliderRef = useRef<Slider | null>(null);
 	const initialSlide = getInitialSlide(balance);
 	const settings = {
+		accessibility: false,
+		arrows: false,
 		infinite: false,
 		touchMove: false,
 		speed: 500,
