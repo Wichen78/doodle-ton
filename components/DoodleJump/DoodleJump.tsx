@@ -3,61 +3,56 @@
 'use client';
 
 import React, { FC, useEffect, useState } from 'react';
-import GameCanvas from '@/components/DoodleJump/GameCanvas';
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
-import { useAPIUser } from '@/hooks/api/useAPIUser';
 import { useGame } from '@/contexts/GameContext';
-import { useGameStore } from '@/utils/game-mechanics';
+import { GameStatus, useGameStore } from '@/utils/game-mechanics';
+import GameCanvas from '@/components/DoodleJump/GameCanvas';
+import TopBar from '@/components/TopBar/TopBar';
+import PlanetCarousel from '@/components/PlanetCarousel/PlanetCarousel';
+import NextLevel from '@/components/PlanetCarousel/NextLevel';
 
 const DoodleJump: FC = () => {
 	const { orientation, requestAccess } = useDeviceOrientation();
 	const { userTelegramInitData } = useGameStore();
-	const { score, starScore } = useGame();
-	const { best, createAttempt } = useAPIAttempt();
-	const { balance } = useAPIUser();
-	const [gameEnded, setGameEnded] = useState<boolean>(true);
+	const { score, starScore, resetGame } = useGame();
+	const { createAttempt } = useAPIAttempt();
+	const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.ENDED);
 
 	useEffect(() => {
-		if (gameEnded && score >= 0) {
+		if (gameStatus === GameStatus.ENDED && score >= 0) {
 			createAttempt.mutate({ telegramInitData: userTelegramInitData, score, starScore });
 		}
-	}, [gameEnded]);
+	}, [gameStatus]);
+
+	const onStop = () => {
+		if (gameStatus === GameStatus.PAUSED) {
+			setGameStatus(GameStatus.RUNNING);
+		} else if (gameStatus === GameStatus.RUNNING) {
+			setGameStatus(GameStatus.PAUSED);
+		}
+	};
 
 	const onPlay = () => {
 		requestAccess();
-		setGameEnded(false);
+		resetGame();
+		setGameStatus(GameStatus.RUNNING);
 	};
 
 	return (
-		<>
-			{
-				!gameEnded && (
-					<p className="absolute inset-y-4 left-1/2 -translate-x-1/2 text-3xl">{ score } | { starScore }</p>
-				)
-			}
-			<GameCanvas orientation={ orientation } gameEnded={ gameEnded } setGameEndedAction={ setGameEnded } />
-			{ gameEnded && (
-				<div
-					className="flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-					{ !createAttempt.isPending && createAttempt.isSuccess &&
-						(
-							<>
-								<p className="text-2xl">Score: { createAttempt.data?.points }</p>
-								<p className="text-2xl">Star: { createAttempt.data?.stars }</p>
-							</>
-						) }
-					<button
-						onClick={ onPlay }
-						className="px-10 py-8 rounded-2xl bg-gray-600">
-						<p className="text-4xl">{ score < 0 ? 'PLAY' : 'REPLAY' }</p>
-					</button>
-					{ !best.isPending && best.isSuccess && <p className="text-2xl">Best: { best.data?.points }</p> }
-					{ !balance.isPending && balance.isSuccess &&
-						<p className="text-2xl">Star Balance: { balance.data?.starsBalance }</p> }
-				</div>
-			) }
-		</>
+		<div className="bg-gradient-to-b from-blue-500 to-blue-100">
+			<GameCanvas orientation={ orientation } gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
+			<div className="absolute w-full h-full top-0 flex flex-col justify-between">
+				<TopBar gameStatus={ gameStatus } onStop={ onStop } />
+				{ gameStatus === GameStatus.ENDED && (
+					<>
+						<img src="/title.svg" alt="Astro Ton" className="max-h-48 max-w-[80%] mx-auto" />
+						<PlanetCarousel onPlay={ onPlay } />
+						<NextLevel />
+					</>
+				) }
+			</div>
+		</div>
 	);
 };
 

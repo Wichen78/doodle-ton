@@ -1,6 +1,6 @@
 // contexts/ToastContext.tsx
 
-'use client'
+'use client';
 
 import React, { createContext, FC, ReactNode, useContext } from 'react';
 import { toast, Toaster } from 'react-hot-toast';

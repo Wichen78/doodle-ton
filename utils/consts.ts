@@ -11,7 +11,12 @@ export const STAR = {
 	width: 50,
 	height: 50,
 	minSpace: 20,
-}
+};
+
+export const GameDifficulty = {
+	GRAVITY: 1,
+	BOUNCE_VELOCITY: -37.5,
+};
 
 export enum ElementType {
 	PLATFORM = 'PLATFORM',

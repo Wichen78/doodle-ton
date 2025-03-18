@@ -3,6 +3,12 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+export enum GameStatus {
+	RUNNING = 'RUNNING',
+	PAUSED = 'PAUSED',
+	ENDED = 'ENDED',
+}
+
 export interface GameState {
 	userTelegramInitData: string;
 	userTelegramName: string;

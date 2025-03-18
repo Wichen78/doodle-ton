@@ -1,7 +1,9 @@
 // utils/playerUtils.ts
 
+import { UseQueryResult } from '@tanstack/react-query';
 import { DoodlePlayer } from '@/types';
-import { ElementType, PLATFORM, STAR } from '@/utils/consts.ts';
+import { UserResponse } from '@/types/api';
+import { ElementType, PLATFORM, STAR } from '@/utils/consts';
 
 export const updatePlayers = (
 	context: CanvasRenderingContext2D,
@@ -60,8 +62,19 @@ export const drawElement = (context: CanvasRenderingContext2D, element: {
 	}
 };
 
-export const getNextElementType = (elements: { x: number; y: number; type: ElementType }[], score: number): ElementType => {
+export const getNextElementType = (elements: {
+	x: number;
+	y: number;
+	type: ElementType
+}[], score: number): ElementType => {
 	return elements.some(e => e.type === ElementType.STAR)
 		? ElementType.PLATFORM
 		: ((score >= 10 && score < 12) || (score >= 50 && score % 50 < 2)) ? ElementType.STAR : ElementType.PLATFORM;
+};
+
+export const getInitialSlide = (balance: UseQueryResult<UserResponse, Error>) => {
+	if (balance.isSuccess) {
+		return Math.floor(balance.data?.starsBalance / 150);
+	}
+	return 0;
 };
