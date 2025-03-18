@@ -1,18 +1,9 @@
-// contexts/GameContext.tsx
+// providers/GameProvider.tsx
 
 'use client';
 
-import { createContext, FC, ReactNode, useContext, useState } from 'react';
-
-type GameContextType = {
-	score: number;
-	starScore: number;
-	increaseScore: (score: number) => void;
-	increaseStarScore: (score: number) => void;
-	resetGame: () => void;
-}
-
-const GameContext = createContext<GameContextType | undefined>(undefined);
+import { FC, ReactNode, useState } from 'react';
+import { GameContext } from '@/contexts/GameContext';
 
 export const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [score, setScore] = useState<number>(-1);
@@ -36,12 +27,4 @@ export const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			{ children }
 		</GameContext.Provider>
 	);
-};
-
-export const useGame = () => {
-	const context = useContext(GameContext);
-	if (context === undefined) {
-		throw new Error('useGame must be used within a GameProvider');
-	}
-	return context;
 };

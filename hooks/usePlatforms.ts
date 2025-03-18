@@ -3,7 +3,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useGame } from '@/contexts/GameContext';
+import { useGame } from '@/hooks/useGame';
 import { ElementType, GameDifficulty, PLATFORM, STAR } from '@/utils/consts';
 import { drawElement, getNextElementType, isColliding, random } from '@/utils/playerUtils';
 import { DoodlePlayer } from '@/types';

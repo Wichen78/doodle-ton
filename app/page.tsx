@@ -6,7 +6,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { UAParser } from 'ua-parser-js';
 import { QueryClient } from '@tanstack/query-core';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { GameProvider } from '@/contexts/GameContext';
+import { GameProvider } from '@/providers/GameProvider';
 import Loading from '@/components/Loading/Loading';
 import { UserLoader } from '@/components/Loading/UserLoader';
 import DoodleJump from '@/components/DoodleJump/DoodleJump';

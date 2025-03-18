@@ -3,8 +3,8 @@
 'use client';
 
 import { FC } from 'react';
-import { useAPIUser } from '@/hooks/api/useAPIUser.ts';
-import { getInitialSlide } from '@/utils/playerUtils.ts';
+import { useAPIUser } from '@/hooks/api/useAPIUser';
+import { getInitialSlide } from '@/utils/playerUtils';
 
 const NextLevel: FC = () => {
 	const { balance } = useAPIUser();
