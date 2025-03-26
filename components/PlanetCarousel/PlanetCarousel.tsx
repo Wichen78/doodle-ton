@@ -2,11 +2,11 @@
 
 'use client';
 
-import { FC, useEffect, useRef } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import './PlanetCarrousel.css';
+import { FC } from 'react';
+import { motion } from 'framer-motion';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCreative, Navigation } from 'swiper/modules';
+import 'swiper/css';
 import { useAPIUser } from '@/hooks/api/useAPIUser';
 import { getInitialSlide } from '@/utils/playerUtils';
 
@@ -16,42 +16,55 @@ interface PlanetCarouselProps {
 
 const PlanetCarousel: FC<PlanetCarouselProps> = ({ onPlay }) => {
 	const { balance } = useAPIUser();
-	const sliderRef = useRef<Slider | null>(null);
-	const initialSlide = getInitialSlide(balance);
-	const settings = {
-		accessibility: false,
-		arrows: false,
-		infinite: false,
-		touchMove: false,
-		speed: 500,
-		slidesToShow: 3,
-		slidesToScroll: 1,
-		initialSlide: initialSlide + 2,
-		centerMode: true,
-		focusOnSelect: false
-	};
-
-	useEffect(() => {
-		if (sliderRef.current && balance.isSuccess) {
-			sliderRef.current.slickGoTo(initialSlide + 2);
-		}
-	}, [balance]);
+	const maxSlide = getInitialSlide(balance);
 
 	const SLIDES = Array.from(Array(8).keys());
+
 	return (
-		<Slider ref={ slider => {
-			sliderRef.current = slider;
-		} } { ...settings }>
-			<div key="0" />
-			<div key="1" />
-			{ SLIDES.map((index) => (
-				<img key={ index + 2 } src={ `/planets/planet${ index + 1 }.svg` } alt={ `planet${ index }` }
-						 className={ index === initialSlide ? 'h-20' : 'h-12' }
-						 onClick={ () => index === initialSlide ? onPlay() : {} } />
-			)) }
-			<div key="11" />
-			<div key="12" />
-		</Slider>
+		<div className="relative flex justify-center h-52">
+			<Swiper
+				slidesPerView={ 5 }
+				centeredSlides={ true }
+				grabCursor={ true }
+				modules={ [Navigation, EffectCreative] }
+				effect="creative"
+				creativeEffect={ {
+					perspective: true,
+					limitProgress: 4,
+					prev: {
+						translate: ["-150%", "15%", -300],
+						rotate: [0, 0, -10],
+						origin: "bottom",
+					},
+					next: {
+						translate: ["150%", "15%", -300],
+						rotate: [0, 0, 10],
+						origin: "bottom",
+					},
+				} }
+				className="w-[500px]"
+			>
+				{ SLIDES.map((index) => (
+					<SwiperSlide key={ index }>
+						{ ({ isActive }) => (
+							<motion.div
+								className="relative w-full h-32 overflow-hidden"
+								initial={ { opacity: 0, scale: 0.8 } }
+								animate={ { opacity: 1, scale: 1 } }
+								transition={ { duration: 0.5, delay: index * 0.1 } }
+							>
+								<img src="/planets/shadow.svg" alt="" className="absolute w-full bottom-0 h-14" />
+								<img src={ `/planets/planet${ index + 1 }.svg` } alt={ `planet${ index }` }
+										 className="absolute w-full bottom-6 h-14"
+										 onClick={ () => isActive && index <= maxSlide ? onPlay() : {} } />
+								{ index > maxSlide && (
+									<img src="/locked.svg" alt="locked" className="absolute w-full h-8 bottom-9" />) }
+							</motion.div>
+						) }
+					</SwiperSlide>
+				)) }
+			</Swiper>
+		</div>
 	);
 };
 
