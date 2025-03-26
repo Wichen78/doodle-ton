@@ -7,15 +7,14 @@ import { useGameLoop } from '@/hooks/useGameLoop';
 import { GameStatus } from '@/utils/game-mechanics';
 
 interface GameCanvasProps {
-	orientation: DeviceOrientationEvent | null;
 	gameStatus: GameStatus;
 	setGameStatus: (gameStatus: GameStatus) => void;
 }
 
-const GameCanvas: FC<GameCanvasProps> = ({ orientation, gameStatus, setGameStatus }) => {
+const GameCanvas: FC<GameCanvasProps> = ({ gameStatus, setGameStatus }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	useGameLoop(canvasRef, orientation, gameStatus, setGameStatus);
+	useGameLoop(canvasRef, gameStatus, setGameStatus);
 
 	return (
 		<canvas ref={ canvasRef } style={ { border: '1px solid black' } } />

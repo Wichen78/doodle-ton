@@ -13,7 +13,7 @@ import PlanetCarousel from '@/components/PlanetCarousel/PlanetCarousel';
 import NextLevel from '@/components/PlanetCarousel/NextLevel';
 
 const DoodleJump: FC = () => {
-	const { orientation, requestAccess } = useDeviceOrientation();
+	const { requestAccess } = useDeviceOrientation();
 	const { userTelegramInitData } = useGameStore();
 	const { score, starScore, resetGame } = useGame();
 	const { createAttempt } = useAPIAttempt();
@@ -41,7 +41,7 @@ const DoodleJump: FC = () => {
 
 	return (
 		<div className="bg-gradient-to-b from-blue-500 to-blue-100">
-			<GameCanvas orientation={ orientation } gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
+			<GameCanvas gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
 			<div className="absolute w-full h-full top-0 flex flex-col justify-between">
 				<TopBar gameStatus={ gameStatus } onStop={ onStop } />
 				{ gameStatus === GameStatus.ENDED && (

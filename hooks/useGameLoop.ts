@@ -3,6 +3,7 @@
 'use client';
 
 import { RefObject, useEffect, useRef, useState } from 'react';
+import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { usePlatforms } from '@/hooks/usePlatforms';
 import { DoodlePlayer } from '@/types';
 import { loadImage, updatePlayers } from '@/utils/playerUtils';
@@ -11,7 +12,6 @@ import { GameStatus } from '@/utils/game-mechanics';
 
 export const useGameLoop = (
 	canvasRef: RefObject<HTMLCanvasElement>,
-	orientation: DeviceOrientationEvent | null,
 	gameStatus: GameStatus,
 	setGameStatus: (status: GameStatus) => void
 ) => {
@@ -26,6 +26,7 @@ export const useGameLoop = (
 		background: null,
 		star: null
 	});
+	const { orientation } = useDeviceOrientation();
 	const { addNewElements, initializePlatforms, updateElements } = usePlatforms();
 	const [gameState, setGameState] = useState<{
 		canvas: HTMLCanvasElement | null;
@@ -48,7 +49,7 @@ export const useGameLoop = (
 
 	// Update player direction
 	useEffect(() => {
-		playerDir.current = orientation?.gamma ? Math.sign(orientation.gamma) : 0;
+		playerDir.current = orientation?.gamma && Math.abs(orientation.gamma) > 10 ? Math.sign(orientation.gamma) : 0;
 	}, [orientation]);
 
 	useEffect(() => {
