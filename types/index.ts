@@ -5,6 +5,7 @@ export interface DoodlePlayer {
 	dy: number;
 	width: number;
 	height: number;
+	drawOnly: boolean;
 }
 
 export interface DeviceOrientationEventIOS extends DeviceOrientationEvent {
@@ -34,4 +35,9 @@ export type GameContextType = {
 	increaseScore: (score: number) => void;
 	increaseStarScore: (score: number) => void;
 	resetGame: () => void;
+}
+
+export interface PlatformOption {
+	direction: boolean;
+	gap?: number;
 }

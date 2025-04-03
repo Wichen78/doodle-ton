@@ -4,7 +4,7 @@
 
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { usePlatforms } from '@/hooks/usePlatforms';
-import { DoodlePlayer } from '@/types';
+import { DoodlePlayer, PlatformOption } from '@/types';
 import { loadImage, updatePlayers } from '@/utils/playerUtils';
 import { ElementType, GameDifficulty } from '@/utils/consts';
 import { GameStatus } from '@/utils/game-mechanics';
@@ -17,14 +17,14 @@ export const useGameLoop = (
 ) => {
 	const playerDir = useRef(0);
 	const prevDoodleY = useRef(0);
-	const elements = useRef<{ x: number; y: number, type: ElementType }[]>([]);
+	const elements = useRef<{ x: number; y: number, type: ElementType, options: PlatformOption }[]>([]);
 	const loopId = useRef<number | null>(null);
 	const images = useRef<Record<string, HTMLImageElement | null>>({
 		playerRight: null,
 		playerLeft: null,
 		platform: null,
 		background: null,
-		star: null
+		star: null,
 	});
 	const { addNewElements, initializePlatforms, updateElements } = usePlatforms();
 	const [gameState, setGameState] = useState<{
@@ -70,6 +70,7 @@ export const useGameLoop = (
 		y: canvas.height - 240,
 		dx: 0,
 		dy: 0,
+		drawOnly: false
 	});
 
 	const setupCanvas = () => {
@@ -110,12 +111,14 @@ export const useGameLoop = (
 		}
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
+
 		if (images.current.background) {
 			context.drawImage(images.current.background, 0, 0, canvas.width, canvas.height);
 		}
 
 		// Gestion du mouvement vertical
 		doodle.dy += GameDifficulty.GRAVITY;
+
 		if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
 			elements.current = elements.current.map((el) => ({ ...el, y: el.y - doodle.dy / 2 }));
 			elements.current = addNewElements(canvas, elements.current);
@@ -130,7 +133,7 @@ export const useGameLoop = (
 		// Mise à jour des plateformes et collisions
 		elements.current = updateElements(
 			context, canvas, elements.current, doodle, prevDoodleY.current,
-			images.current.platform, images.current.star
+			images.current.platform, images.current.star,
 		);
 
 		// Affichage du joueur

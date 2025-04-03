@@ -21,7 +21,7 @@ const PlanetCarousel: FC<PlanetCarouselProps> = ({ onPlay }) => {
 	const SLIDES = Array.from(Array(8).keys());
 
 	return (
-		<div className="relative flex justify-center h-52">
+		<div className="relative flex justify-center h-44">
 			<Swiper
 				slidesPerView={ 5 }
 				centeredSlides={ true }
