@@ -41,14 +41,17 @@ const DoodleJump: FC = () => {
 
 	return (
 		<div className="bg-gradient-to-b from-blue-500 to-blue-100">
-			<GameCanvas orientation={orientation} gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
+			<GameCanvas orientation={ orientation } gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
 			<div className="absolute w-full h-full top-0 flex flex-col justify-between">
 				<TopBar gameStatus={ gameStatus } onStop={ onStop } />
 				{ gameStatus === GameStatus.ENDED && (
 					<>
-						<img src="/title.svg" alt="Astro Ton" className="max-h-48 max-w-[80%] mx-auto" />
-						<PlanetCarousel onPlay={ onPlay } />
-						<NextLevel />
+						<img src="/title.svg" alt="Astro Ton" className="max-h-48 max-w-[95%] mx-auto" />
+						<div id="social"></div>
+						<div>
+							<PlanetCarousel onPlay={ onPlay } />
+							<NextLevel />
+						</div>
 					</>
 				) }
 			</div>

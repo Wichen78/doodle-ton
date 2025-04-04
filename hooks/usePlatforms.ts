@@ -4,13 +4,28 @@
 
 import { useEffect, useRef } from 'react';
 import { useGame } from '@/hooks/useGame';
-import { ElementType, GameDifficulty, PLATFORM, STAR } from '@/utils/consts';
-import { drawElement, getNextElementType, isColliding, random } from '@/utils/playerUtils';
-import { DoodlePlayer } from '@/types';
+import { BLACK_HOLE, ElementType, GameDifficulty, MONSTER, PLATFORM, STAR } from '@/utils/consts';
+import { drawElement, getNextElementType, isColliding, loadImage, random } from '@/utils/playerUtils';
+import { DoodlePlayer, PlatformOption } from '@/types';
 
 export const usePlatforms = () => {
 	const { score, increaseStarScore, increaseScore } = useGame();
 	const scoreRef = useRef(score);
+
+	const images = useRef<Record<string, HTMLImageElement | null>>({
+		monsterRight: null,
+		monsterLeft: null
+	});
+
+	// Load images
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			images.current = {
+				monsterRight: loadImage('monsters/default/right.svg'),
+				monsterLeft: loadImage('monsters/default/left.svg'),
+			};
+		}
+	}, []);
 
 	useEffect(() => {
 		scoreRef.current = score;
@@ -20,7 +35,8 @@ export const usePlatforms = () => {
 		const platforms = [{
 			x: canvas.width / 2 - PLATFORM.width / 2,
 			y: canvas.height - 50,
-			type: ElementType.PLATFORM
+			type: ElementType.PLATFORM,
+			options: { direction: true }
 		}];
 
 		for (let y = platforms[0].y - (PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace));
@@ -29,59 +45,123 @@ export const usePlatforms = () => {
 			platforms.push({
 				x: random(25, canvas.width - 25 - PLATFORM.width),
 				y,
-				type: ElementType.PLATFORM
+				type: ElementType.PLATFORM,
+				options: { direction: true }
 			});
 		}
 
 		return platforms;
 	};
 
-	const addNewElements = (canvas: HTMLCanvasElement, platforms: { x: number; y: number, type: ElementType }[]) => {
+	const addNewElements = (
+		canvas: HTMLCanvasElement,
+		platforms: { x: number; y: number; type: ElementType, options: PlatformOption }[]
+	) => {
 		let y = platforms[platforms.length - 1].y;
 
 		while (y > 0) {
 			const type = getNextElementType(platforms, scoreRef.current);
+
+			const widthMap = {
+				[ElementType.STAR]: STAR.width,
+				[ElementType.MONSTER]: MONSTER.width,
+				[ElementType.PLATFORM]: PLATFORM.width,
+				[ElementType.BLACK_HOLE]: BLACK_HOLE.width,
+			};
+
 			const x = type === ElementType.STAR
 				? platforms[platforms.length - 1].x + PLATFORM.width / 2 - STAR.width / 2
-				: random(25, canvas.width - 25 - PLATFORM.width);
+				: type === ElementType.MONSTER
+					? platforms[platforms.length - 1].x + PLATFORM.width / 2 - MONSTER.width / 2
+					: random(25, canvas.width - 25 - widthMap[type]);
 
-			y -= (type === ElementType.STAR ? STAR.height + STAR.minSpace : PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace));
-			platforms.push({ x, y, type });
+			const heightMap = {
+				[ElementType.STAR]: STAR.height + STAR.minSpace,
+				[ElementType.MONSTER]: MONSTER.height + MONSTER.minSpace,
+				[ElementType.PLATFORM]: PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace),
+				[ElementType.BLACK_HOLE]: BLACK_HOLE.height + BLACK_HOLE.minSpace,
+			};
+
+			const options = type === ElementType.MONSTER ? { gap: 0, direction: true } : { direction: true };
+
+			y -= heightMap[type];
+			platforms.push({ x, y, type, options });
 		}
 
 		return platforms;
 	};
-
 	const updateElements = (
 		context: CanvasRenderingContext2D,
 		canvas: HTMLCanvasElement,
-		elements: { x: number; y: number, type: ElementType }[],
+		elements: { x: number; y: number; type: ElementType; options: PlatformOption }[],
 		doodle: DoodlePlayer,
 		prevDoodleY: number,
 		platformImage: HTMLImageElement | null,
 		starImage: HTMLImageElement | null
 	) => {
-		elements = elements.filter(element => {
-			drawElement(context, element, platformImage, starImage);
+		const newElements = [];
 
-			if (element.type === ElementType.STAR && isColliding(doodle, element, STAR)) {
-				increaseStarScore(1);
-				return false; // Supprime l'étoile collectée
+		for (const element of elements) {
+			const monsterImage = element.options.direction ? images.current.monsterRight : images.current.monsterLeft;
+			drawElement(context, element, platformImage, starImage, monsterImage);
+
+			if (doodle.drawOnly) {
+				newElements.push(element);
+				continue;
 			}
 
-			if (element.type === ElementType.PLATFORM && doodle.dy > 0 &&
-				prevDoodleY + doodle.height <= element.y && isColliding(doodle, element, PLATFORM)) {
+			// Gestion des collisions
+			if (element.type === ElementType.STAR && isColliding(doodle, element, STAR)) {
+				increaseStarScore(1);
+				continue; // Ne pas ajouter l'étoile collectée
+			}
+
+			if (element.type === ElementType.MONSTER) {
+				if (isColliding(doodle, element, MONSTER)) {
+					doodle.dy = 0;
+					doodle.drawOnly = true;
+				}
+				handleMonsterMovement(element);
+			}
+
+			if (
+				element.type === ElementType.PLATFORM &&
+				doodle.dy > 0 &&
+				prevDoodleY + doodle.height <= element.y &&
+				isColliding(doodle, element, PLATFORM)
+			) {
 				doodle.y = element.y - doodle.height;
 				doodle.dy = GameDifficulty.BOUNCE_VELOCITY;
 			}
 
-			return true;
-		});
+			newElements.push(element);
+		}
+
+		elements = newElements;
 
 		const visibleElements = elements.filter(e => e.y < canvas.height);
 		increaseScore(elements.length - visibleElements.length);
 
 		return visibleElements;
+	};
+
+	const handleMonsterMovement = (element: { options: PlatformOption }) => {
+		element.options.gap = element.options.gap || 0;
+		const maxGap = PLATFORM.width / 2;
+
+		if (element.options.direction) {
+			if (element.options.gap < maxGap) {
+				element.options.gap += 1;
+			} else {
+				element.options.direction = false;
+			}
+		} else {
+			if (-element.options.gap < maxGap) {
+				element.options.gap -= 1;
+			} else {
+				element.options.direction = true;
+			}
+		}
 	};
 
 	return { initializePlatforms, addNewElements, updateElements };
