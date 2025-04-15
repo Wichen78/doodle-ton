@@ -47,7 +47,6 @@ const DoodleJump: FC = () => {
 				{ gameStatus === GameStatus.ENDED && (
 					<>
 						<img src="/title.svg" alt="Astro Ton" className="max-h-48 max-w-[95%] mx-auto" />
-						<div id="social"></div>
 						<div>
 							<PlanetCarousel onPlay={ onPlay } />
 							<NextLevel />
