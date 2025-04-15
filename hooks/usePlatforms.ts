@@ -50,16 +50,6 @@ export const usePlatforms = () => {
 			});
 		}
 
-		platforms.push({
-			x: platforms[platforms.length - 1].x + PLATFORM.width / 2 - MONSTER.width / 2,
-			y: platforms[platforms.length - 1].y - MONSTER.height - MONSTER.minSpace,
-			type: ElementType.MONSTER,
-			options: {
-				direction: true,
-				alive: true,
-			}
-		});
-
 		return platforms;
 	};
 
