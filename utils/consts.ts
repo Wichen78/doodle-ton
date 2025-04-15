@@ -14,8 +14,8 @@ export const STAR = {
 };
 
 export const MONSTER = {
-	width: 50,
-	height: 75,
+	width: 75,
+	height: 100,
 	minSpace: 20,
 };
 

@@ -1,3 +1,5 @@
+import { ElementType } from '@/utils/consts.ts';
+
 export interface DoodlePlayer {
 	x: number;
 	y: number;
@@ -39,5 +41,14 @@ export type GameContextType = {
 
 export interface PlatformOption {
 	direction: boolean;
-	gap?: number;
+	alive?: boolean;
+	gapX?: number;
+	gapY?: number;
+}
+
+export interface Platform {
+	x: number;
+	y: number;
+	type: ElementType;
+	options: PlatformOption;
 }
