@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { useGame } from '@/hooks/useGame';
 import { BLACK_HOLE, ElementType, GameDifficulty, MONSTER, PLATFORM, STAR } from '@/utils/consts';
 import { drawElement, getNextElementType, isColliding, loadImage, random } from '@/utils/playerUtils';
-import { DoodlePlayer, PlatformOption } from '@/types';
+import { DoodlePlayer, Platform, PlatformOption } from '@/types';
 
 export const usePlatforms = () => {
 	const { score, increaseStarScore, increaseScore } = useGame();
@@ -32,7 +32,7 @@ export const usePlatforms = () => {
 	}, [score]);
 
 	const initializePlatforms = (canvas: HTMLCanvasElement) => {
-		const platforms = [{
+		const platforms: Platform[] = [{
 			x: canvas.width / 2 - PLATFORM.width / 2,
 			y: canvas.height - 50,
 			type: ElementType.PLATFORM,
@@ -50,12 +50,22 @@ export const usePlatforms = () => {
 			});
 		}
 
+		platforms.push({
+			x: platforms[platforms.length - 1].x + PLATFORM.width / 2 - MONSTER.width / 2,
+			y: platforms[platforms.length - 1].y - MONSTER.height - MONSTER.minSpace,
+			type: ElementType.MONSTER,
+			options: {
+				direction: true,
+				alive: true,
+			}
+		});
+
 		return platforms;
 	};
 
 	const addNewElements = (
 		canvas: HTMLCanvasElement,
-		platforms: { x: number; y: number; type: ElementType, options: PlatformOption }[]
+		platforms: Platform[]
 	) => {
 		let y = platforms[platforms.length - 1].y;
 
@@ -82,7 +92,12 @@ export const usePlatforms = () => {
 				[ElementType.BLACK_HOLE]: BLACK_HOLE.height + BLACK_HOLE.minSpace,
 			};
 
-			const options = type === ElementType.MONSTER ? { gap: 0, direction: true } : { direction: true };
+			const options = type === ElementType.MONSTER ? {
+				direction: true,
+				alive: true,
+				gapX: 0,
+				gapY: 0
+			} : { direction: true };
 
 			y -= heightMap[type];
 			platforms.push({ x, y, type, options });
@@ -93,7 +108,7 @@ export const usePlatforms = () => {
 	const updateElements = (
 		context: CanvasRenderingContext2D,
 		canvas: HTMLCanvasElement,
-		elements: { x: number; y: number; type: ElementType; options: PlatformOption }[],
+		elements: Platform[],
 		doodle: DoodlePlayer,
 		prevDoodleY: number,
 		platformImage: HTMLImageElement | null,
@@ -118,8 +133,14 @@ export const usePlatforms = () => {
 
 			if (element.type === ElementType.MONSTER) {
 				if (isColliding(doodle, element, MONSTER)) {
-					doodle.dy = 0;
-					doodle.drawOnly = true;
+					if (doodle.dy > 0 && prevDoodleY + doodle.height <= element.y) {
+						element.options.alive = false;
+						doodle.y = element.y - doodle.height;
+						doodle.dy = GameDifficulty.BOUNCE_VELOCITY;
+					} else {
+						doodle.dy = 0;
+						doodle.drawOnly = true;
+					}
 				}
 				handleMonsterMovement(element);
 			}
@@ -146,18 +167,25 @@ export const usePlatforms = () => {
 	};
 
 	const handleMonsterMovement = (element: { options: PlatformOption }) => {
-		element.options.gap = element.options.gap || 0;
+		element.options.gapX = element.options.gapX || 0;
+		element.options.gapY = element.options.gapY || 0;
+		element.options.alive = element.options.alive || false;
 		const maxGap = PLATFORM.width / 2;
 
+		if (!element.options.alive) {
+			element.options.gapY += 16;
+			return;
+		}
+
 		if (element.options.direction) {
-			if (element.options.gap < maxGap) {
-				element.options.gap += 1;
+			if (element.options.gapX < maxGap) {
+				element.options.gapX += 1;
 			} else {
 				element.options.direction = false;
 			}
 		} else {
-			if (-element.options.gap < maxGap) {
-				element.options.gap -= 1;
+			if (-element.options.gapX < maxGap) {
+				element.options.gapX -= 1;
 			} else {
 				element.options.direction = true;
 			}

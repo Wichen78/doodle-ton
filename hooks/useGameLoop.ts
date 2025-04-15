@@ -4,9 +4,9 @@
 
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { usePlatforms } from '@/hooks/usePlatforms';
-import { DoodlePlayer, PlatformOption } from '@/types';
+import { DoodlePlayer, Platform } from '@/types';
 import { loadImage, updatePlayers } from '@/utils/playerUtils';
-import { ElementType, GameDifficulty } from '@/utils/consts';
+import { GameDifficulty } from '@/utils/consts';
 import { GameStatus } from '@/utils/game-mechanics';
 
 export const useGameLoop = (
@@ -17,7 +17,7 @@ export const useGameLoop = (
 ) => {
 	const playerDir = useRef(0);
 	const prevDoodleY = useRef(0);
-	const elements = useRef<{ x: number; y: number, type: ElementType, options: PlatformOption }[]>([]);
+	const elements = useRef<Platform[]>([]);
 	const loopId = useRef<number | null>(null);
 	const images = useRef<Record<string, HTMLImageElement | null>>({
 		playerRight: null,
