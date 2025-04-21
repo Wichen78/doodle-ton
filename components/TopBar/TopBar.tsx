@@ -29,7 +29,7 @@ const TopBar: FC<TopBarProps> = ({ gameStatus, onStop }) => {
 
 			<div className="flex flex-col items-center">
 				{ gameStatus === GameStatus.ENDED && (
-					<p className="text-2xl font-bold p-0.5 rounded bg-gray-400">{ best.isSuccess ? best?.data?.points : 0 }</p>) }
+					<p className="text-2xl font-bold p-0.5 rounded bg-gray-400">{ best.isSuccess ? best?.data?.points ?? 0 : 0 }</p>) }
 				<p className="text-2xl font-bold">{ Math.max(0, score) }</p>
 			</div>
 			<div

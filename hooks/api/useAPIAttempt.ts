@@ -40,7 +40,7 @@ export const useAPIAttempt = () => {
 	const createAttemptMutation = useMutation({
 		mutationFn: createAttempt,
 		onSuccess: (result) => {
-			if (getBest.data?.points && result.points > getBest.data?.points) {
+			if (getBest.data === null || getBest.data?.points && result.points > getBest.data?.points) {
 				queryClient.invalidateQueries({ queryKey: GET_ATTEMPT.BEST_KEY });
 			}
 			if (result.stars > 0) {
