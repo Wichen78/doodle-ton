@@ -8,7 +8,7 @@ import { GET_ATTEMPT, GET_USER } from '@/types/queryKey';
 import { CreateAttemptQueryParams, GetAttemptQueryParams } from '@/types/queryParams';
 import { useGameStore } from '@/utils/game-mechanics';
 
-const fetchAttemptBest = async (params: GetAttemptQueryParams): Promise<AttemptResponse> => {
+const fetchAttemptBest = async (params: GetAttemptQueryParams): Promise<AttemptResponse | null> => {
 	const response = await fetch(`/api/attempt/best?telegramInitData=${ encodeURIComponent(params.telegramInitData) }`);
 	return response.json();
 };
