@@ -18,7 +18,8 @@ const TopBar: FC<TopBarProps> = ({ gameStatus, onStop }) => {
 	const { best } = useAPIAttempt();
 
 	return (
-		<div className="w-full flex justify-between items-center px-2 py-1">
+		<div
+			className={ `w-full flex justify-between items-center px-2 py-1 ${ gameStatus === GameStatus.PAUSED ? 'bg-blue-400/90' : 'bg-transparent' }` }>
 			<button
 				className={ `flex items-center space-x-2 mr-6 p-2 rounded-3xl bg-yellow-500 border-solid border-2 border-white ${ gameStatus === GameStatus.ENDED ? 'invisible' : '' }` }
 				onClick={ onStop }
@@ -29,7 +30,8 @@ const TopBar: FC<TopBarProps> = ({ gameStatus, onStop }) => {
 
 			<div className="flex flex-col items-center">
 				{ gameStatus === GameStatus.ENDED && (
-					<p className="text-2xl font-bold p-0.5 rounded bg-gray-400">{ best.isSuccess ? best?.data?.points ?? 0 : 0 }</p>) }
+					<p
+						className="text-2xl font-bold p-0.5 rounded bg-gray-400">{ best.isSuccess ? best?.data?.points ?? 0 : 0 }</p>) }
 				<p className="text-2xl font-bold">{ Math.max(0, score) }</p>
 			</div>
 			<div
