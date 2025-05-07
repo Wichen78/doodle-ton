@@ -23,11 +23,15 @@ const PlanetCarousel: FC<PlanetCarouselProps> = ({ onPlay }) => {
 
 	return (
 		<div className="relative flex flex-col justify-center content-center flex-wrap h-56">
-			<button
-				className="block bg-sky-400 text-white font-semibold py-2 px-4 mx-auto rounded disabled:bg-gray-300 disabled:text-gray-500"
-				onClick={ onPlay } disabled={ activeIndex > maxSlide }
-			>PLAY
-			</button>
+			<div className="flex flex-col transform-3d">
+				<button
+					className="translate-y-11 px-7 py-3 mx-auto rounded-3xl bg-blue-500/75 disabled:bg-gray-300 disabled:text-gray-500 active:bg-blue-600"
+					onClick={ onPlay } disabled={ activeIndex > maxSlide }
+				>PLAY
+				</button>
+				<div
+					className={ `w-24 h-12 mx-auto rounded-3xl ${ activeIndex > maxSlide ? 'bg-gray-500' : 'bg-blue-700' }` } />
+			</div>
 			<Swiper
 				onActiveIndexChange={ (swiper) => setActiveIndex(swiper.activeIndex) }
 				slidesPerView={ 5 }
