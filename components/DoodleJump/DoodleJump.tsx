@@ -39,6 +39,11 @@ const DoodleJump: FC = () => {
 		setGameStatus(GameStatus.RUNNING);
 	};
 
+	const onExit = () => {
+		resetGame();
+		setGameStatus(GameStatus.ENDED);
+	};
+
 	return (
 		<div className="bg-gradient-to-b from-blue-500 to-blue-100">
 			<GameCanvas orientation={ orientation } gameStatus={ gameStatus } setGameStatus={ setGameStatus } />
@@ -52,6 +57,20 @@ const DoodleJump: FC = () => {
 							<NextLevel />
 						</div>
 					</>
+				) }
+				{ gameStatus === GameStatus.PAUSED && (
+					<div className="flex-1 flex items-center justify-center bg-blue-400/90">
+						<div className="flex flex-col space-y-2">
+							<button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl"
+											onClick={ onStop }>
+								Resume
+							</button>
+							<button className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-xl"
+											onClick={ onExit }>
+								Exit
+							</button>
+						</div>
+					</div>
 				) }
 			</div>
 		</div>
