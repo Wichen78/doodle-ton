@@ -1,7 +1,8 @@
 // app/utils/consts.ts
 
-import { Geist } from 'next/font/google';
+import { Chewy } from 'next/font/google';
 
-export const geist = Geist({
+export const font = Chewy({
+	weight: ['400'],
 	subsets: ['latin'],
 });
