@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import './globals.css';
 import { ToastProvider } from '@/contexts/ToastContext';
-import { geist } from '@/app/utils/consts';
+import { font } from '@/app/utils/consts';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 
 const RootLayout: FC<{ children: React.ReactNode }> = ({ children, }) => {
 	return (
-		<html lang="en" className={ geist.className }>
+		<html lang="en" className={ font.className }>
 		<body>
 			<ToastProvider>
 				<main>{ children }</main>

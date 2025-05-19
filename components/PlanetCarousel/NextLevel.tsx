@@ -13,7 +13,7 @@ const NextLevel: FC = () => {
 	return (
 		<div className="flex flex-col items-center space-y-1 pt-1 pb-8">
 			<div className="flex items-center">
-				<p className="font-bold p-0.5 rounded bg-gray-400 text-white">LEVEL UP</p>
+				<p className="font-bold px-2 py-0.5 rounded bg-gray-400 text-white">LEVEL UP</p>
 				<img src="/unlocked.svg" alt="unlocked" className="h-6" />
 			</div>
 			<div className="flex space-x-1">
