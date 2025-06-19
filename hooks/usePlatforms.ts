@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useGame } from '@/hooks/useGame';
-import { BLACK_HOLE, ElementType, GameDifficulty, MONSTER, PLATFORM, STAR } from '@/utils/consts';
+import { BLACK_HOLE, ElementType, GameDifficulty, JET_PACK, MONSTER, PLATFORM, STAR } from '@/utils/consts';
 import { drawElement, getNextElementType, isColliding, loadImage, random } from '@/utils/playerUtils';
 import { DoodlePlayer, Platform, PlatformOption } from '@/types';
 
@@ -14,7 +14,9 @@ export const usePlatforms = () => {
 
 	const images = useRef<Record<string, HTMLImageElement | null>>({
 		monsterRight: null,
-		monsterLeft: null
+		monsterLeft: null,
+		star: null,
+		jetpack: null,
 	});
 
 	// Load images
@@ -23,6 +25,8 @@ export const usePlatforms = () => {
 			images.current = {
 				monsterRight: loadImage('monsters/default/right.svg'),
 				monsterLeft: loadImage('monsters/default/left.svg'),
+				star: loadImage('star.svg'),
+				jetpack: loadImage('jetpack/default.svg'),
 			};
 		}
 	}, []);
@@ -50,36 +54,48 @@ export const usePlatforms = () => {
 			});
 		}
 
+		platforms.push({
+			x: platforms[platforms.length - 1].x + PLATFORM.width / 2 - JET_PACK.width / 2,
+			y: platforms[platforms.length - 1].y - JET_PACK.height - JET_PACK.minSpace,
+			type: ElementType.JET_PACK,
+			options: { direction: true }
+		});
+
 		return platforms;
 	};
 
 	const addNewElements = (
 		canvas: HTMLCanvasElement,
+		doodle: DoodlePlayer,
 		platforms: Platform[]
 	) => {
 		let y = platforms[platforms.length - 1].y;
 
 		while (y > 0) {
-			const type = getNextElementType(platforms, scoreRef.current);
+			const type = doodle.jetpack ? ElementType.PLATFORM : getNextElementType(platforms, scoreRef.current);
 
 			const widthMap = {
 				[ElementType.STAR]: STAR.width,
 				[ElementType.MONSTER]: MONSTER.width,
 				[ElementType.PLATFORM]: PLATFORM.width,
 				[ElementType.BLACK_HOLE]: BLACK_HOLE.width,
+				[ElementType.JET_PACK]: JET_PACK.width,
 			};
 
 			const x = type === ElementType.STAR
 				? platforms[platforms.length - 1].x + PLATFORM.width / 2 - STAR.width / 2
 				: type === ElementType.MONSTER
 					? platforms[platforms.length - 1].x + PLATFORM.width / 2 - MONSTER.width / 2
-					: random(25, canvas.width - 25 - widthMap[type]);
+					: type === ElementType.JET_PACK
+						? platforms[platforms.length - 1].x + PLATFORM.width / 2 - JET_PACK.width / 2
+						: random(25, canvas.width - 25 - widthMap[type]);
 
 			const heightMap = {
 				[ElementType.STAR]: STAR.height + STAR.minSpace,
 				[ElementType.MONSTER]: MONSTER.height + MONSTER.minSpace,
 				[ElementType.PLATFORM]: PLATFORM.height + random(PLATFORM.minSpace, PLATFORM.maxSpace),
 				[ElementType.BLACK_HOLE]: BLACK_HOLE.height + BLACK_HOLE.minSpace,
+				[ElementType.JET_PACK]: JET_PACK.height + JET_PACK.minSpace,
 			};
 
 			const options = type === ElementType.MONSTER ? {
@@ -102,13 +118,17 @@ export const usePlatforms = () => {
 		doodle: DoodlePlayer,
 		prevDoodleY: number,
 		platformImage: HTMLImageElement | null,
-		starImage: HTMLImageElement | null
 	) => {
 		const newElements = [];
 
+		if (doodle.jetpack && doodle.jetpackLimit < scoreRef.current) {
+			doodle.jetpack = false;
+			doodle.jetpackLimit = 0;
+		}
+
 		for (const element of elements) {
 			const monsterImage = element.options.direction ? images.current.monsterRight : images.current.monsterLeft;
-			drawElement(context, element, platformImage, starImage, monsterImage);
+			drawElement(context, element, platformImage, images.current.star, monsterImage, images.current.jetpack);
 
 			if (doodle.drawOnly) {
 				newElements.push(element);
@@ -121,12 +141,19 @@ export const usePlatforms = () => {
 				continue; // Ne pas ajouter l'étoile collectée
 			}
 
+			if (element.type === ElementType.JET_PACK && isColliding(doodle, element, JET_PACK)) {
+				doodle.jetpack = true;
+				doodle.jetpackLimit = scoreRef.current + 35;
+				continue; // Ne pas ajouter le jetpack collectée
+			}
+
 			if (element.type === ElementType.MONSTER) {
 				if (isColliding(doodle, element, MONSTER)) {
 					if (doodle.dy > 0 && prevDoodleY + doodle.height <= element.y) {
 						element.options.alive = false;
 						doodle.y = element.y - doodle.height;
 						doodle.dy = GameDifficulty.BOUNCE_VELOCITY;
+						increaseStarScore(1);
 					} else {
 						doodle.dy = 0;
 						doodle.drawOnly = true;

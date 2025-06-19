@@ -25,6 +25,12 @@ export const BLACK_HOLE = {
 	minSpace: 20,
 };
 
+export const JET_PACK = {
+	width: 50,
+	height: 90,
+	minSpace: 20,
+};
+
 export const GameDifficulty = {
 	GRAVITY: 1,
 	BOUNCE_VELOCITY: -37.5,
@@ -35,4 +41,5 @@ export enum ElementType {
 	STAR = 'STAR',
 	MONSTER = 'MONSTER',
 	BLACK_HOLE = 'BLACK_HOLE',
+	JET_PACK = "JET_PACK",
 }

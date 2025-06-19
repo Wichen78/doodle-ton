@@ -8,6 +8,8 @@ export interface DoodlePlayer {
 	width: number;
 	height: number;
 	drawOnly: boolean;
+	jetpack: boolean;
+	jetpackLimit: number;
 }
 
 export interface DeviceOrientationEventIOS extends DeviceOrientationEvent {
