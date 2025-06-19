@@ -24,7 +24,7 @@ export const useGameLoop = (
 		playerLeft: null,
 		platform: null,
 		background: null,
-		star: null,
+		playerJetpack: null,
 	});
 	const { addNewElements, initializePlatforms, updateElements } = usePlatforms();
 	const [gameState, setGameState] = useState<{
@@ -41,7 +41,7 @@ export const useGameLoop = (
 				playerLeft: loadImage('players/default/left.svg'),
 				platform: loadImage('platforms/default.png'),
 				background: loadImage('backgrounds/default.svg'),
-				star: loadImage('star.svg'),
+				playerJetpack: loadImage('jetpack/player.svg'),
 			};
 		}
 	}, []);
@@ -70,7 +70,9 @@ export const useGameLoop = (
 		y: canvas.height - 240,
 		dx: 0,
 		dy: 0,
-		drawOnly: false
+		drawOnly: false,
+		jetpack: false,
+		jetpackLimit: 0
 	});
 
 	const setupCanvas = () => {
@@ -117,11 +119,17 @@ export const useGameLoop = (
 		}
 
 		// Gestion du mouvement vertical
-		doodle.dy += GameDifficulty.GRAVITY;
+		if (doodle?.jetpack) {
+			if (doodle.dy > -66) {
+				doodle.dy -= GameDifficulty.GRAVITY;
+			}
+		} else {
+			doodle.dy += GameDifficulty.GRAVITY;
+		}
 
 		if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
 			elements.current = elements.current.map((el) => ({ ...el, y: el.y - doodle.dy / 2 }));
-			elements.current = addNewElements(canvas, elements.current);
+			elements.current = addNewElements(canvas, doodle, elements.current);
 		} else {
 			doodle.y += doodle.dy;
 		}
@@ -132,12 +140,11 @@ export const useGameLoop = (
 
 		// Mise à jour des plateformes et collisions
 		elements.current = updateElements(
-			context, canvas, elements.current, doodle, prevDoodleY.current,
-			images.current.platform, images.current.star,
+			context, canvas, elements.current, doodle, prevDoodleY.current, images.current.platform,
 		);
 
 		// Affichage du joueur
-		updatePlayers(context, doodle, images.current.playerRight, images.current.playerLeft);
+		updatePlayers(context, doodle, images.current.playerRight, images.current.playerLeft, images.current.playerJetpack);
 		prevDoodleY.current = doodle.y;
 
 		// Condition de fin de jeu

@@ -3,15 +3,16 @@
 import { UseQueryResult } from '@tanstack/react-query';
 import { DoodlePlayer, Platform } from '@/types';
 import { UserResponse } from '@/types/api';
-import { ElementType, MONSTER, PLATFORM, STAR } from '@/utils/consts';
+import { ElementType, JET_PACK, MONSTER, PLATFORM, STAR } from '@/utils/consts';
 
 export const updatePlayers = (
 	context: CanvasRenderingContext2D,
 	doodle: DoodlePlayer,
 	playerRightImageRef: HTMLImageElement | null,
 	playerLeftImageRef: HTMLImageElement | null,
+	playerJetpackImageRef: HTMLImageElement | null,
 ) => {
-	const imageRef = doodle.dx >= 0 ? playerRightImageRef : playerLeftImageRef;
+	const imageRef = doodle.jetpack ? playerJetpackImageRef : doodle.dx >= 0 ? playerRightImageRef : playerLeftImageRef;
 
 	if (imageRef) {
 		context.drawImage(imageRef, doodle.x, doodle.y, doodle.width, doodle.height);
@@ -44,7 +45,7 @@ export const isColliding = (doodle: DoodlePlayer, element: Platform, size: {
 
 export const random = (min: number, max: number) => Math.random() * (max - min) + min;
 
-export const drawElement = (context: CanvasRenderingContext2D, element: Platform, platformImage: HTMLImageElement | null, starImage: HTMLImageElement | null, monsterImage: HTMLImageElement | null) => {
+export const drawElement = (context: CanvasRenderingContext2D, element: Platform, platformImage: HTMLImageElement | null, starImage: HTMLImageElement | null, monsterImage: HTMLImageElement | null, jetpack: HTMLImageElement | null) => {
 	switch (element.type) {
 		case ElementType.STAR:
 			if (starImage) {
@@ -64,6 +65,15 @@ export const drawElement = (context: CanvasRenderingContext2D, element: Platform
 			}
 			break;
 
+		case ElementType.JET_PACK:
+			if (jetpack) {
+				context.drawImage(jetpack, element.x, element.y, JET_PACK.width, JET_PACK.height);
+			} else {
+				context.fillStyle = 'blue';
+				context.fillRect(element.x, element.y, JET_PACK.width, JET_PACK.height);
+			}
+			break;
+
 		case ElementType.PLATFORM:
 		default:
 			if (platformImage) {
@@ -77,20 +87,20 @@ export const drawElement = (context: CanvasRenderingContext2D, element: Platform
 };
 
 export const getNextElementType = (elements: Platform[], score: number): ElementType => {
-	const hasStar = elements.some(e => e.type === ElementType.STAR);
-	const hasEnemy = elements.some(e => e.type === ElementType.MONSTER);
-	if (hasStar) {
-		return hasEnemy ? ElementType.PLATFORM : (score >= 30 && score % 30 < 2) ? ElementType.MONSTER : ElementType.PLATFORM;
+	const occupied = elements.some(e =>
+		[ElementType.STAR, ElementType.MONSTER, ElementType.JET_PACK].includes(e.type)
+	);
+	if (occupied) return ElementType.PLATFORM;
+
+	// Déclenche tous les 30 points
+	if (score >= 25 && score % 25 < 2) {
+		const cycleIndex = Math.floor(score / 25) % 4;
+		return cycleIndex === 0 ? ElementType.JET_PACK : cycleIndex === 3 ? ElementType.STAR : ElementType.MONSTER;
 	}
 
-	const shouldSpawnStar = (score >= 10 && score < 12) || (score >= 50 && score % 50 < 2);
-	if (hasEnemy) {
-		return shouldSpawnStar ? ElementType.STAR : ElementType.PLATFORM;
-	}
-
-	const shouldSpawnMonster = score >= 35 && score % 35 < 2;
-	return shouldSpawnStar ? ElementType.STAR : shouldSpawnMonster ? ElementType.MONSTER : ElementType.PLATFORM;
+	return ElementType.PLATFORM;
 };
+
 
 export const getInitialSlide = (balance: UseQueryResult<UserResponse, Error>) => {
 	if (balance.isSuccess) {
