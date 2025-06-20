@@ -178,7 +178,16 @@ export const usePlatforms = () => {
 		elements = newElements;
 
 		const visibleElements = elements.filter(e => e.y < canvas.height);
-		increaseScore(elements.length - visibleElements.length);
+		const elementsDisappeared = elements.length - visibleElements.length;
+		if (elementsDisappeared > 0) {
+			const prevStars = Math.floor(scoreRef.current / 150);
+			const newStars = Math.floor((scoreRef.current + elementsDisappeared) / 150);
+			increaseScore(elementsDisappeared);
+
+			if (newStars > prevStars) {
+				increaseStarScore(newStars - prevStars);
+			}
+		}
 
 		return visibleElements;
 	};
