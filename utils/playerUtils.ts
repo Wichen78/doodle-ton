@@ -87,14 +87,14 @@ export const drawElement = (context: CanvasRenderingContext2D, element: Platform
 };
 
 export const getNextElementType = (elements: Platform[], score: number): ElementType => {
-	const occupied = elements.some(e =>
+	const occupied = elements.slice(-6).some(e =>
 		[ElementType.STAR, ElementType.MONSTER, ElementType.JET_PACK].includes(e.type)
 	);
 	if (occupied) return ElementType.PLATFORM;
 
-	// Déclenche tous les 30 points
-	if (score >= 25 && score % 25 < 2) {
-		const cycleIndex = Math.floor(score / 25) % 4;
+	// Déclenche tous les 12 points
+	if (score >= 12 && score % 12 < 2) {
+		const cycleIndex = Math.floor(score / 12) % 6;
 		return cycleIndex === 0 ? ElementType.JET_PACK : cycleIndex === 3 ? ElementType.STAR : ElementType.MONSTER;
 	}
 
