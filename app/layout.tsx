@@ -9,6 +9,7 @@ import type { Metadata, Viewport } from 'next';
 export const metadata: Metadata = {
 	title: 'Astro TON',
 	description: 'JUMP Jump jump',
+	manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
