@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.astro_ton.twa",
+        "sha256_cert_fingerprints": ["7B:F6:2D:BD:D9:3C:06:BE:94:34:A3:49:10:64:E5:62:A7:DE:B2:2B:94:CA:30:BB:C1:E6:B1:CE:27:79:16:D5"]
+      }
+    }]
