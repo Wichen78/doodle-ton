@@ -39,12 +39,3 @@ yarn-error.log*
 next-env.d.ts
 
 /.idea
-
-
-.gradle
-/app/build
-*.keystore
-*.apk
-*.aab
-*.idsig
-/manifest-checksum.txt
