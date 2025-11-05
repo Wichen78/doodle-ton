@@ -28,11 +28,6 @@ export interface IconProps {
 	className?: string;
 }
 
-export interface NavigationProps {
-	currentView: string;
-	setCurrentViewAction: (view: string) => void;
-}
-
 export type GameContextType = {
 	score: number;
 	starScore: number;

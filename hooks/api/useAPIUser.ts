@@ -9,6 +9,22 @@ import { GET_USER, GET_USER_KEY } from '@/types/queryKey';
 import { GetAttemptQueryParams, GetUserQueryParams } from '@/types/queryParams';
 import { GameState, InitialGameState, useGameStore } from '@/utils/game-mechanics';
 
+const fetchUserBalance = async (params: GetAttemptQueryParams): Promise<UserResponse> => {
+	const response = await fetch(`/api/user/balance?telegramInitData=${ encodeURIComponent(params.telegramInitData) }`);
+	return response.json();
+};
+
+export const useAPIUser = () => {
+	const { userTelegramInitData } = useGameStore();
+
+	const balance = useQuery({
+		queryKey: GET_USER.BALANCE_KEY,
+		queryFn: () => fetchUserBalance({ telegramInitData: userTelegramInitData }),
+	});
+
+	return { balance };
+};
+
 const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 	const response = await fetch('/api/user', {
 		method: 'POST',
@@ -19,11 +35,6 @@ const fetchUser = async (params: GetUserQueryParams): Promise<UserResponse> => {
 			telegramInitData: params.telegramInitData,
 		}),
 	});
-	return response.json();
-};
-
-const fetchUserBalance = async (params: GetAttemptQueryParams): Promise<UserResponse> => {
-	const response = await fetch(`/api/user/balance?telegramInitData=${ encodeURIComponent(params.telegramInitData) }`);
 	return response.json();
 };
 
@@ -53,41 +64,33 @@ export const useLazyGetUser = () => {
 		}
 	}, [initDataKey]);
 
-	const fetchUserTelegram = async () => {
-		try {
-			let initData: string | null = null;
+	const fetchUserTelegram = async (tgInitData?: string) => {
+		if (tgInitData) {
+			setInitDataKey(tgInitData);
+		} else {
+			try {
+				let initData: string | undefined = tgInitData;
 
-			if (typeof window !== 'undefined') {
-				const WebApp = (await import('@twa-dev/sdk')).default;
-				WebApp.ready();
-				initData = WebApp.initData;
-			}
+				if (typeof window !== 'undefined') {
+					const WebApp = (await import('@twa-dev/sdk')).default;
+					WebApp.ready();
+					initData = WebApp.initData;
+				} else if (process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH) {
+					initData = 'temp';
+				}
 
-			if (process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH === 'true') {
-				initData = 'temp';
-			}
-
-			if (!initData) {
+				if (!initData) {
+					initializeState({ isCompleted: true });
+				} else {
+					setInitDataKey(initData);
+				}
+			} catch (error) {
+				console.error('Error fetching user data:', error);
 				initializeState({ isCompleted: true });
-			} else {
-				setInitDataKey(initData);
 			}
-		} catch (error) {
-			console.error('Error fetching user data:', error);
-			initializeState({ isCompleted: true });
 		}
 	};
 
 	return { fetchUserTelegram };
 };
 
-export const useAPIUser = () => {
-	const { userTelegramInitData } = useGameStore();
-
-	const balance = useQuery({
-		queryKey: GET_USER.BALANCE_KEY,
-		queryFn: () => fetchUserBalance({ telegramInitData: userTelegramInitData }),
-	});
-
-	return { balance };
-};

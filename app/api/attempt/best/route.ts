@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 		return NextResponse.json({ error: 'Invalid Telegram data' }, { status: 403 });
 	}
 
-	const telegramId = process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH === 'true' ? process.env.USER_TEST : telegramUser.id?.toString();
+	const telegramId = process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH ? process.env.USER_TEST : telegramUser.id?.toString();
 
 	if (!telegramId) {
 		return NextResponse.json({ error: 'Invalid user data' }, { status: 400 });

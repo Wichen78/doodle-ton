@@ -1,10 +1,12 @@
 // app/layout.tsx
 
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
+import type { Metadata, Viewport } from 'next';
+
 import './globals.css';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { AuthProvider } from '@/providers/AuthProvider';
 import { font } from '@/app/utils/consts';
-import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Astro TON',
@@ -19,13 +21,16 @@ export const viewport: Viewport = {
 	userScalable: false,
 };
 
-const RootLayout: FC<{ children: React.ReactNode }> = ({ children, }) => {
+const RootLayout: FC<{ children: ReactNode }> = async ({ children }) => {
 	return (
 		<html lang="en" className={ font.className }>
 		<body>
-			<ToastProvider>
-				<main>{ children }</main>
-			</ToastProvider>
+			<div
+				className="w-full bg-gradient-to-b from-blue-500 to-blue-100 text-white h-screen overflow-y-hidden no-scrollbar font-bold">
+				<ToastProvider>
+					<AuthProvider>{ children }</AuthProvider>
+				</ToastProvider>
+			</div>
 		</body>
 		</html>
 	);

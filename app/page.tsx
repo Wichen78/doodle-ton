@@ -4,14 +4,9 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { UAParser } from 'ua-parser-js';
-import { QueryClient } from '@tanstack/query-core';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { GameProvider } from '@/providers/GameProvider';
 import Loading from '@/components/Loading/Loading';
-import { UserLoader } from '@/components/Loading/UserLoader';
 import DoodleJump from '@/components/DoodleJump/DoodleJump';
-
-const queryClient = new QueryClient();
 
 const Page: FC = () => {
 	const [isAppropriateDevice, setIsAppropriateDevice] = useState<boolean | null>(null);
@@ -19,7 +14,7 @@ const Page: FC = () => {
 	useEffect(() => {
 		const parser = new UAParser();
 		const device = parser.getDevice();
-		const isAllowed = process.env.NEXT_PUBLIC_ALLOW_ALL_DEVICES === 'true' || device.type === 'mobile' || device.type === 'tablet';
+		const isAllowed = process.env.NEXT_PUBLIC_ALLOW_ALL_DEVICES || device.type === 'mobile' || device.type === 'tablet';
 
 		setIsAppropriateDevice(isAllowed);
 	}, []);
@@ -37,15 +32,9 @@ const Page: FC = () => {
 	}
 
 	return (
-		<div className="w-full bg-[#1d2025] text-white h-screen overflow-y-hidden no-scrollbar font-bold">
-			<QueryClientProvider client={ queryClient }>
-				<GameProvider>
-					<UserLoader>
-						<DoodleJump />
-					</UserLoader>
-				</GameProvider>
-			</QueryClientProvider>
-		</div>
+		<GameProvider>
+			<DoodleJump />
+		</GameProvider>
 	);
 };
 
