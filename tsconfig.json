@@ -23,6 +23,7 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
     "plugins": [
       {
         "name": "next"
@@ -33,7 +34,7 @@
       "@/*": [
         "*"
       ]
-    }
+    },
   },
   "include": [
     "./dist/types/**/*.ts",

@@ -26,7 +26,7 @@ export function validateTelegramWebAppData(telegramInitData: string): Validation
 
 	console.log('telegramInitData', telegramInitData);
 
-	if (process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH === 'true') {
+	if (process.env.NEXT_PUBLIC_BYPASS_TELEGRAM_AUTH) {
 		validatedData = { temp: '' };
 		user = { id: 'undefined', username: 'Unknown User' };
 		message = 'Authentication bypassed for development';
@@ -53,7 +53,10 @@ export function validateTelegramWebAppData(telegramInitData: string): Validation
 
 		console.log('Data Check String:', dataCheckString);
 
-		const secretKey = crypto.createHmac('sha256', 'WebAppData').update(BOT_TOKEN).digest();
+		const isMiniApp = telegramInitData.includes('signature=');
+		const secretKey = isMiniApp
+			? crypto.createHmac('sha256', 'WebAppData').update(BOT_TOKEN).digest()
+			: BOT_TOKEN;
 		const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
 
 		console.log('Calculated Hash:', calculatedHash);

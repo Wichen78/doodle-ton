@@ -3,7 +3,7 @@
 'use client';
 
 import { FC } from 'react';
-import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
+import { Cog6ToothIcon, PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
 import { useGame } from '@/hooks/useGame';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';
 import { GameStatus } from '@/utils/game-mechanics';
@@ -11,22 +11,36 @@ import { GameStatus } from '@/utils/game-mechanics';
 interface TopBarProps {
 	gameStatus: GameStatus;
 	onStop: () => void;
+	blur: boolean;
+	onSettings: () => void;
 }
 
-const TopBar: FC<TopBarProps> = ({ gameStatus, onStop }) => {
+const TopBar: FC<TopBarProps> = ({ gameStatus, onStop, blur, onSettings }) => {
 	const { score, starScore } = useGame();
 	const { best } = useAPIAttempt();
 
 	return (
 		<div
-			className={ `w-full flex justify-between items-center px-2 py-1 ${ gameStatus === GameStatus.PAUSED ? 'bg-blue-400/90' : 'bg-transparent' }` }>
-			<button
-				className={ `flex items-center space-x-2 mr-6 p-2 rounded-3xl bg-yellow-500 border-solid border-2 border-white ${ gameStatus === GameStatus.ENDED ? 'invisible' : '' }` }
-				onClick={ onStop }
-			>
-				{ gameStatus === GameStatus.RUNNING ? <PauseIcon className="size-8 text-white" /> :
-					<PlayIcon className="size-8 text-white" /> }
-			</button>
+			className={ `w-full flex justify-between items-center px-2 py-1 ${ blur ? 'bg-blue-400/90' : 'bg-transparent' }` }>
+
+			{
+				gameStatus === GameStatus.ENDED ? (
+					<button
+						className="flex items-center space-x-2 mr-6 p-2 rounded-3xl bg-yellow-500 border-solid border-2 border-white"
+						onClick={ onSettings }
+					>
+						<Cog6ToothIcon className="size-8 text-white" />
+					</button>
+				) : (
+					<button
+						className="flex items-center space-x-2 mr-6 p-2 rounded-3xl bg-yellow-500 border-solid border-2 border-white"
+						onClick={ onStop }
+					>
+						{ gameStatus === GameStatus.RUNNING ? <PauseIcon className="size-8 text-white" /> :
+							<PlayIcon className="size-8 text-white" /> }
+					</button>
+				)
+			}
 
 			<div className="flex flex-col items-center">
 				{ gameStatus === GameStatus.ENDED && (

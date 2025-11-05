@@ -26,7 +26,7 @@ const PlanetCarousel: FC<PlanetCarouselProps> = ({ onPlay }) => {
 		<div className="relative flex flex-col justify-center content-center flex-wrap h-56">
 			<div className="flex flex-col transform-3d">
 				<button
-					className={ `translate-y-1 px-7 py-3 mx-auto rounded-3xl bg-blue-700 disabled:bg-gray-500 disabled:text-gray-700  shadow-button ${ activeIndex > maxSlide ? 'after:bg-gray-400/75' : 'after:bg-blue-500/75 active:after:bg-blue-600/75' }` }
+					className={ `translate-y-1 px-6 py-1 mx-auto rounded-3xl text-2xl bg-blue-700 disabled:bg-gray-500 disabled:text-gray-700 shadow-button ${ activeIndex > maxSlide ? 'after:bg-gray-400/75' : 'after:bg-blue-500/75 active:after:bg-blue-600/75' }` }
 					onClick={ onPlay } disabled={ activeIndex > maxSlide }
 				>PLAY
 				</button>
