@@ -26,6 +26,7 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
     "react-slick": "^0.30.3",
+    "react-telegram-login": "^1.1.2",
     "swiper": "^11.2.6",
     "ua-parser-js": "^2.0.0",
     "zustand": "^5.0.2"
