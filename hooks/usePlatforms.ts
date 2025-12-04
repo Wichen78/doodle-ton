@@ -8,6 +8,21 @@ import { BLACK_HOLE, ElementType, GameDifficulty, JET_PACK, MONSTER, PLATFORM, S
 import { drawElement, getNextElementType, isColliding, loadImage, random } from '@/utils/playerUtils';
 import { DoodlePlayer, Platform, PlatformOption } from '@/types';
 
+/**
+ * Custom hook `usePlatforms` to manage game platform logic, including initialization, updating,
+ * and handling dynamic elements like platforms, monsters, stars, and jetpacks within the game.
+ *
+ * It provides several utilities:
+ * - Initializing the game platforms at the start or reset.
+ * - Adding new elements dynamically as the player progresses through the game.
+ * - Updating elements, managing collisions, movements, and scoring.
+ *
+ * @return {Object} An object containing the following methods:
+ * - `initializePlatforms`: Initializes the starting platforms and sets their positions based on canvas size.
+ * - `addNewElements`: Dynamically adds new elements (platforms, stars, monsters, jetpacks) to the game as the player moves upward.
+ * - `updateElements`: Handles rendering and updating of elements, including collision detection, removing invisible elements,
+ *   and updating scores and gameplay dynamics.
+ */
 export const usePlatforms = () => {
 	const { score, increaseStarScore, increaseScore } = useGame();
 	const scoreRef = useRef(score);

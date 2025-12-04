@@ -9,6 +9,17 @@ import { loadImage, updatePlayers } from '@/utils/playerUtils';
 import { GameDifficulty } from '@/utils/consts';
 import { GameStatus } from '@/utils/game-mechanics';
 
+/**
+ * A custom hook that manages the game loop and states for a canvas-based game.
+ * It initializes the game, handles input, updates game elements, manages collision detection, and renders each frame.
+ *
+ * @param {RefObject<HTMLCanvasElement>} canvasRef - Reference to the canvas element used for rendering the game.
+ * @param {DeviceOrientationEvent | null} orientation - Device orientation data used for player movement.
+ * @param {GameStatus} gameStatus - Current status of the game, used to control game flow (e.g., running, ended).
+ * @param {(status: GameStatus) => void} setGameStatus - Function to update the game's status (e.g., start, end the game).
+ *
+ * @returns {void}
+ */
 export const useGameLoop = (
 	canvasRef: RefObject<HTMLCanvasElement>,
 	orientation: DeviceOrientationEvent | null,

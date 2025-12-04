@@ -14,6 +14,15 @@ const fetchUserBalance = async (params: GetAttemptQueryParams): Promise<UserResp
 	return response.json();
 };
 
+/**
+ * useAPIUser is a custom hook that retrieves and manages API-related user data.
+ *
+ * This hook internally fetches the user's balance using the API and returns the balance information.
+ * It depends on the `userTelegramInitData` value from the `useGameStore` hook for initializing the query.
+ *
+ * @returns {Object} - An object containing the following properties:
+ * - balance: The result of the user balance query returned from the API, managed using `useQuery`.
+ */
 export const useAPIUser = () => {
 	const { userTelegramInitData } = useGameStore();
 

@@ -14,6 +14,20 @@ import DashboardLayout from '@/components/DashboardLayout';
 import PauseLayout from '@/components/PauseLayout/PauseLayout';
 import SettingsLayout from '@/components/SettingsLayout';
 
+/**
+ * Represents the DoodleJump game component.
+ *
+ * This component manages the core game logic, including game state transitions, user interactions,
+ * and integration with external APIs for attempts and scoring. It provides a UI layout with game
+ * elements such as a game canvas, top bar, pause menu, settings menu, and dashboard.
+ *
+ * Visual Components:
+ * - `GameCanvas`: The primary game screen that renders game graphics and handles gameplay.
+ * - `TopBar`: Displays game controls and settings toggle with optional blur during pause/settings.
+ * - `PauseLayout`: Displays the pause menu with options to resume or exit the game.
+ * - `SettingsLayout`: Displays configurable game or app settings.
+ * - `DashboardLayout`: Shown when the game ends, providing an option to start a new game.
+ */
 const DoodleJump: FC = () => {
 	const [openSettings, setOpenSettings] = useState<boolean>(false);
 	const { orientation, requestAccess } = useDeviceOrientation();
