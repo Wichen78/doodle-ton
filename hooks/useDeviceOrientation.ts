@@ -5,6 +5,20 @@
 import { useCallback, useEffect, useState } from 'react';
 import { DeviceOrientationData, DeviceOrientationEventIOS } from '@/types';
 
+/**
+ * A custom hook that provides access to device orientation data.
+ *
+ * @returns {DeviceOrientationData} An object containing the current orientation data of the device,
+ * any error that occurred during access, and functions to request or revoke access to device orientation events.
+ *
+ * The returned object includes the following properties:
+ * - `orientation`: The latest device orientation event data, or null if not available.
+ * - `error`: An error object if an issue occurred while requesting device orientation access, or null otherwise.
+ * - `requestAccess`: A callback function to request access to the device's orientation data. If the device requires
+ *   user permission (like on iOS), this function will handle the permission request. Returns a Promise that resolves
+ *   to a boolean indicating whether access was successfully granted.
+ * - `revokeAccess`: A callback function to stop listening for device orientation changes and reset the orientation data.
+ */
 export const useDeviceOrientation = (): DeviceOrientationData => {
 	const [error, setError] = useState<Error | null>(null);
 	const [orientation, setOrientation] = useState<DeviceOrientationEvent | null>(null);

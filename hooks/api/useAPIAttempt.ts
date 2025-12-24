@@ -28,6 +28,16 @@ const createAttempt = async (params: CreateAttemptQueryParams): Promise<AttemptR
 	return response.json();
 };
 
+/**
+ * Custom hook for managing API logic related to game attempts.
+ *
+ * This hook provides functionality to fetch the best attempt for a user and to create new attempts.
+ * It also handles state management and invalidates specific cached queries upon success or failure.
+ *
+ * @returns {Object} An object containing:
+ * - `best`: The query object for fetching the best game attempt associated with the user.
+ * - `createAttempt`: The mutation object for creating a new attempt.
+ */
 export const useAPIAttempt = () => {
 	const queryClient = useQueryClient();
 	const { userTelegramInitData } = useGameStore();
