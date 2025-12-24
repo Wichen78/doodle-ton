@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 import { TelegramLoginScript } from '@/app/utils/TelegramLoginScript';
 import PlanetCarousel from '@/components/PlanetCarousel/PlanetCarousel';
