@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 import { useAPIAttempt } from '@/hooks/api/useAPIAttempt';

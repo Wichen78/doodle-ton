@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useGameStore } from '@/utils/game-mechanics';
 
 interface SettingsLayoutProps {
